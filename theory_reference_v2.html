@@ -1,0 +1,2828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web3 Theory Quick Reference — 6-Month Plan</title>
+<style>
+  :root {
+    --bg:#0f1117; --surface:#1a1d2e; --surface2:#242740;
+    --accent:#6c63ff; --accent2:#00d4aa; --accent3:#ff6b6b;
+    --gold:#ffd166; --text:#e2e8f0; --muted:#8892a4;
+    --border:#2d3148; --code-bg:#0d1117;
+    --sidebar-w: 230px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+  /* ── Layout ── */
+  .sidebar {
+    position:fixed; top:0; left:0;
+    width:var(--sidebar-w); height:100vh;
+    background:var(--surface); border-right:1px solid var(--border);
+    overflow-y:auto; padding:20px 0; z-index:100;
+  }
+  .sidebar-title { font-size:11px; font-weight:700; color:var(--accent);
+    text-transform:uppercase; letter-spacing:1.5px; padding:0 18px 12px; }
+  .sidebar a { display:block; padding:6px 18px; color:var(--muted);
+    text-decoration:none; font-size:12.5px; transition:all .15s;
+    border-left:3px solid transparent; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sidebar a:hover,.sidebar a.active { color:var(--text); background:var(--surface2); border-left-color:var(--accent); }
+  .sidebar .section-label { font-size:10px; font-weight:700; color:var(--accent2);
+    text-transform:uppercase; letter-spacing:1px; padding:14px 18px 4px; }
+
+  /* ── Main — fluid, fills remaining viewport width ── */
+  main {
+    margin-left: var(--sidebar-w);
+    width: calc(100vw - var(--sidebar-w));
+    padding: 40px 44px;
+  }
+
+  /* ── Hero ── */
+  .hero { background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
+    border:1px solid var(--border); border-radius:12px; padding:36px 40px;
+    margin-bottom:40px; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; top:-40px; right:-40px; width:220px; height:220px;
+    border-radius:50%; background:radial-gradient(circle,rgba(108,99,255,.15) 0%,transparent 70%); }
+  .hero h1 { font-size:26px; font-weight:800; margin-bottom:8px; }
+  .hero p  { color:var(--muted); font-size:14px; }
+  .hero .tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+  .tag { background:var(--surface2); border:1px solid var(--border); border-radius:20px;
+    padding:4px 12px; font-size:11px; color:var(--muted); }
+
+  /* ── Section ── */
+  .section { margin-bottom:52px; }
+  .section-header { display:flex; align-items:center; gap:12px;
+    margin-bottom:24px; padding-bottom:12px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  .section-icon { width:36px; height:36px; border-radius:8px; display:flex;
+    align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .section-header h2 { font-size:20px; font-weight:700; }
+  .week-badge { background:var(--accent); color:#fff; border-radius:4px;
+    padding:3px 9px; font-size:11px; font-weight:700; margin-left:auto; white-space:nowrap; }
+
+  /* ── Cards — always 2 columns ── */
+  .cards { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:20px; transition:border-color .2s; }
+  .card:hover { border-color:var(--accent); }
+  .card h3 { font-size:13.5px; font-weight:700; margin-bottom:10px; color:var(--accent2); }
+  .card p  { font-size:13px; color:var(--muted); margin-bottom:8px; }
+  .card ul { padding-left:16px; }
+  .card li { font-size:13px; color:var(--muted); margin-bottom:5px; }
+  .card li strong { color:var(--text); }
+  .card-wide { grid-column:span 2; }
+
+  /* ── Code ── */
+  pre { background:var(--code-bg); border:1px solid var(--border); border-radius:8px;
+    padding:16px; overflow-x:auto; font-size:12px; line-height:1.75;
+    font-family:'Fira Code','Cascadia Code',Consolas,monospace; margin:10px 0; }
+  code { background:var(--code-bg); border-radius:4px; padding:2px 6px;
+    font-size:12px; color:#79c0ff; font-family:'Fira Code',monospace; }
+
+  /* ── Resource links ── */
+  .res-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .res-link { display:inline-flex; align-items:center; gap:5px; background:var(--surface2);
+    border:1px solid var(--border); border-radius:6px; padding:5px 12px;
+    font-size:12px; color:var(--accent); text-decoration:none; transition:all .15s; }
+  .res-link:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .res-link::before { content:'↗'; font-size:10px; }
+  /* inline hyperlink inside card */
+  .card a { color:var(--accent); text-decoration:none; font-size:12px; }
+  .card a:hover { text-decoration:underline; }
+
+  /* ── Cheat block ── */
+  .cheat { background:var(--surface2); border-left:3px solid var(--gold);
+    border-radius:0 8px 8px 0; padding:14px 18px; margin:10px 0; font-size:13px; line-height:1.9; }
+  .cheat strong { color:var(--gold); }
+
+  /* ── Tables ── */
+  table { width:100%; border-collapse:collapse; font-size:12.5px; margin:10px 0; }
+  th { background:var(--surface2); padding:9px 13px; text-align:left;
+    font-size:11px; text-transform:uppercase; letter-spacing:.7px; color:var(--muted); }
+  td { padding:8px 13px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:top; }
+  tr:hover td { background:rgba(255,255,255,.02); }
+
+  /* ── Callout ── */
+  .callout { background:rgba(108,99,255,.08); border:1px solid rgba(108,99,255,.25);
+    border-radius:8px; padding:14px 18px; margin:12px 0; font-size:13px; }
+  .callout strong { color:var(--accent); }
+
+  /* ── Section icon themes ── */
+  .theme-web3  .section-icon { background:rgba(108,99,255,.15); }
+  .theme-eth   .section-icon { background:rgba(0,212,170,.15); }
+  .theme-sol   .section-icon { background:rgba(153,69,255,.15); }
+  .theme-rust  .section-icon { background:rgba(255,107,107,.15); }
+  .theme-dsa   .section-icon { background:rgba(255,209,102,.15); }
+  .theme-sys   .section-icon { background:rgba(56,189,248,.15); }
+  .theme-cheat .section-icon { background:rgba(255,209,102,.15); }
+
+  /* ── Responsive ── */
+  @media(max-width:900px){
+    .sidebar { display:none; }
+    main { margin-left:0; width:100%; padding:20px; }
+    .cards { grid-template-columns:1fr; }
+    .card-wide { grid-column:span 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<nav class="sidebar">
+  <div class="sidebar-title">Theory Reference</div>
+
+  <div class="section-label">Web3 Core</div>
+  <a href="#blockchain">⛓️ Blockchain Fundamentals</a>
+  <a href="#eth">💎 Ethereum & EVM</a>
+  <a href="#web3-stack">🔧 Web3 Dev Stack</a>
+  <a href="#solidity">📜 Solidity</a>
+  <a href="#tokens">🪙 Tokens, NFTs & DeFi</a>
+  <a href="#l2">🚀 L2s & Bridges</a>
+
+  <div class="section-label">Solana</div>
+  <a href="#solana-arch">◎ Solana Architecture</a>
+  <a href="#anchor">⚓ Anchor Framework</a>
+  <a href="#solana-defi">🌊 Solana DeFi</a>
+  <a href="#solana-tooling">🛠️ Solana Tooling</a>
+
+  <div class="section-label">Rust</div>
+  <a href="#rust">🦀 Rust Programming</a>
+  <a href="#rust-patterns">🧩 Rust Patterns</a>
+
+  <div class="section-label">DSA</div>
+  <a href="#arrays">🔢 Arrays & Strings</a>
+  <a href="#hashmaps">🗺️ Hash Maps & Sets</a>
+  <a href="#linked">🔗 Linked Lists</a>
+  <a href="#stacks">📚 Stacks & Queues</a>
+  <a href="#trees">🌲 Trees & Heaps</a>
+  <a href="#graphs">🕸️ Graphs</a>
+  <a href="#binary">🔍 Binary Search</a>
+  <a href="#dp">🧮 Dynamic Programming</a>
+  <a href="#backtrack">↩️ Backtracking & Greedy</a>
+
+  <div class="section-label">System Design</div>
+  <a href="#sysdesign">🏗️ Core Concepts</a>
+  <a href="#sysdesign-patterns">📐 Design Patterns</a>
+  <a href="#web3-design">⛓️ Web3 System Design</a>
+
+  <div class="section-label">Interview Prep</div>
+  <a href="#web3-interview">🎯 Web3 Interview Qs</a>
+  <a href="#cheatsheet">⚡ All Cheat Sheets</a>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Web3 Theory Quick Reference</h1>
+  <p>Every concept in your 6-month plan — theory, code snippets, cheat sheets, and direct resource links.</p>
+  <div class="tags">
+    <span class="tag">Ethereum</span><span class="tag">Solidity</span><span class="tag">Solana</span>
+    <span class="tag">Anchor</span><span class="tag">Rust</span><span class="tag">DeFi</span>
+    <span class="tag">DSA</span><span class="tag">System Design</span><span class="tag">Interview Prep</span>
+  </div>
+</div>
+
+<!-- ═══════════════ BLOCKCHAIN FUNDAMENTALS ═══════════════ -->
+<section class="section theme-web3" id="blockchain">
+  <div class="section-header">
+    <div class="section-icon">⛓️</div>
+    <h2>Blockchain Fundamentals</h2>
+    <span class="week-badge">Weeks 1–2</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>What is a Blockchain?</h3>
+      <p>A distributed ledger of transactions, cryptographically linked, stored across many nodes. No single party controls it.</p>
+      <ul>
+        <li><strong>Decentralized:</strong> No single point of control or failure</li>
+        <li><strong>Immutable:</strong> Once confirmed, data cannot be altered</li>
+        <li><strong>Transparent:</strong> Anyone can verify any transaction</li>
+        <li><strong>Trustless:</strong> Cryptography replaces trust in counterparties</li>
+        <li><strong>Permissionless:</strong> Anyone can transact without approval</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Hashing — The Foundation</h3>
+      <p>One-way function: any input → fixed-size output. Deterministic, collision-resistant, irreversible.</p>
+      <pre>Input:  "Hello World"
+SHA-256: a591a6d40bf420404a...
+
+Input:  "Hello World!"  (one char diff)
+SHA-256: 03675ac53ff9cd1535...</pre>
+      <ul>
+        <li><strong>SHA-256:</strong> Bitcoin — 256-bit output</li>
+        <li><strong>Keccak-256:</strong> Ethereum — 256-bit output</li>
+        <li><strong>Ed25519:</strong> Solana signatures (faster)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Public-Key Cryptography</h3>
+      <pre>Private Key (256 random bits — keep secret!)
+        ↓  secp256k1 (ETH) / Ed25519 (SOL)
+Public Key (derived, share freely)
+        ↓  hash + encode
+Address   (shorter, what others send funds to)
+
+ETH address:  0x742d35Cc6634C0532...  (40 hex)
+SOL address:  7Np41oeYqPefeNQh...    (Base58)</pre>
+    </div>
+    <div class="card">
+      <h3>Digital Signatures</h3>
+      <p>Prove you own a private key <em>without</em> revealing it.</p>
+      <pre>Sign:   hash(message) + private_key → Signature
+Verify: Signature + message + public_key → ✅/❌
+
+Ethereum: ECDSA on secp256k1 curve
+Solana:   EdDSA on Ed25519 curve (smaller, faster)
+
+# Why it matters:
+# Every tx is signed — proves sender authorised it
+# Validators verify before including in block</pre>
+    </div>
+    <div class="card">
+      <h3>HD Wallets (BIP-39 / BIP-44)</h3>
+      <p>One 12/24-word seed → unlimited recoverable addresses.</p>
+      <pre>Mnemonic phrase (BIP-39):
+"abandon ability able about above..."
+
+        ↓ PBKDF2 (2048 iterations)
+512-bit seed
+        ↓ BIP-44 derivation
+m/44'/60'/0'/0/0  → ETH address 0
+m/44'/60'/0'/0/1  → ETH address 1
+m/44'/501'/0'/0'  → SOL address
+
+# Lose seed phrase = lose everything. No recovery.</pre>
+    </div>
+    <div class="card">
+      <h3>Consensus Mechanisms</h3>
+      <table>
+        <tr><th>Type</th><th>Method</th><th>Used By</th><th>TPS</th></tr>
+        <tr><td>PoW</td><td>Miners solve puzzles</td><td>Bitcoin</td><td>~7</td></tr>
+        <tr><td>PoS</td><td>Validators stake coins</td><td>Ethereum</td><td>~15-100</td></tr>
+        <tr><td>PoH + PoS</td><td>Cryptographic clock</td><td>Solana</td><td>~65,000</td></tr>
+        <tr><td>dPoS</td><td>Delegated staking</td><td>EOS, TRON</td><td>~1,000+</td></tr>
+      </table>
+      <p style="margin-top:8px">Proof of History: <strong>verifiable delay function</strong> that proves time elapsed between events — eliminates need for validators to communicate to agree on ordering.</p>
+    </div>
+    <div class="card">
+      <h3>Merkle Trees</h3>
+      <p>Binary tree of hashes. Root hash summarises all transactions. Used for efficient proof of inclusion.</p>
+      <pre>       Root Hash
+      /          \
+   Hash(AB)    Hash(CD)
+   /    \       /    \
+ H(A)  H(B)  H(C)  H(D)
+  A     B     C     D  (transactions)
+
+# Proof that A is in the tree:
+# → provide H(B) and Hash(CD)
+# → verifier reconstructs Root Hash
+# Used by: light clients, NFT whitelists (Merkle proofs)</pre>
+    </div>
+    <div class="card">
+      <h3>Block Structure</h3>
+      <pre>Block {
+  header: {
+    parentHash,          // Links to previous block
+    stateRoot,           // Merkle root of all accounts
+    transactionsRoot,    // Merkle root of all txns
+    receiptsRoot,        // Merkle root of tx receipts
+    timestamp,
+    number,
+    nonce (PoW) / validatorSig (PoS)
+  },
+  transactions: [tx1, tx2, ...]
+}
+# Changing any tx → changes transactionsRoot
+# → changes header hash
+# → invalidates all subsequent blocks (immutability)</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://ethereum.org/en/developers/docs/" target="_blank">Ethereum Dev Docs</a>
+    <a class="res-link" href="https://github.com/ethereumbook/ethereumbook" target="_blank">Mastering Ethereum (free book)</a>
+    <a class="res-link" href="https://learnmeabitcoin.com/technical/mnemonic" target="_blank">BIP-39 Explainer</a>
+    <a class="res-link" href="https://andersbrownworth.com/blockchain/" target="_blank">Blockchain Visual Demo</a>
+    <a class="res-link" href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki" target="_blank">BIP-44 Derivation Spec</a>
+    <a class="res-link" href="https://www.youtube.com/watch?v=bBC-nXj3Ng4" target="_blank">3Blue1Brown: Bitcoin (YT)</a>
+  </div>
+</section>
+
+<!-- ═══════════════ ETHEREUM & EVM ═══════════════ -->
+<section class="section theme-eth" id="eth">
+  <div class="section-header">
+    <div class="section-icon">💎</div>
+    <h2>Ethereum & EVM</h2>
+    <span class="week-badge">Weeks 1–4</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>ETH Units & Gas</h3>
+      <pre>1 ETH = 10^18 wei
+1 Gwei = 10^9 wei  (gas prices quoted here)
+
+Fee = Gas Used × (Base Fee + Priority Fee)
+
+Typical gas costs:
+  ETH transfer:       21,000 gas
+  ERC20 transfer:    ~50,000 gas
+  ERC721 mint:       ~70,000 gas
+  Uniswap swap:     ~100,000–150,000 gas
+  Contract deploy:  200,000–2,000,000 gas</pre>
+    </div>
+    <div class="card">
+      <h3>Account Types & State</h3>
+      <ul>
+        <li><strong>EOA (Externally Owned):</strong> Private key → address. Initiates txns. No code.</li>
+        <li><strong>Contract Account:</strong> No private key. Has code + storage. Cannot initiate, only react.</li>
+      </ul>
+      <pre>Account state:
+{
+  nonce:    tx count (EOA) or deployments (contract)
+  balance:  wei held
+  codeHash: hash of contract bytecode (empty for EOA)
+  storageRoot: Merkle root of contract storage
+}</pre>
+    </div>
+    <div class="card">
+      <h3>EVM — How Smart Contracts Execute</h3>
+      <ul>
+        <li>Stack-based virtual machine — 256-bit word size</li>
+        <li>Solidity compiles to <strong>EVM bytecode</strong></li>
+        <li>Every opcode has a gas cost (SLOAD = 2100 gas, SSTORE = 20,000)</li>
+        <li>Storage is expensive — memory/calldata is cheap</li>
+        <li>All EVM-compatible chains (Polygon, Arbitrum, BSC) run same bytecode</li>
+      </ul>
+      <div class="callout"><strong>Key insight:</strong> This is why your Intel OS knowledge helps. EVM is an OS running inside another OS — understanding virtual machines, memory models, and execution contexts is directly applicable.</div>
+    </div>
+    <div class="card">
+      <h3>Transaction Lifecycle</h3>
+      <pre>1. Create tx { to, value, data, gas, nonce }
+2. Sign with private key → get signature (v, r, s)
+3. Broadcast to mempool (public pending pool)
+4. Validator selects (highest fee priority)
+5. Execute in EVM — success or revert
+6. Include in block → propagate to network
+7. Subsequent blocks → "confirmations"
+8. Finality: ~12s (slot) / ~13min (checkpoint)
+
+Nonce: sequential counter → prevents replay attacks
+chainId: prevents cross-chain replay (EIP-155)</pre>
+    </div>
+    <div class="card">
+      <h3>ethers.js v6 Cheat Sheet</h3>
+      <pre>import { ethers } from "ethers";
+
+// Connect to network
+const provider = new ethers.JsonRpcProvider(RPC_URL);
+const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+
+// Read balance
+const bal = await provider.getBalance(address);
+console.log(ethers.formatEther(bal)); // ETH
+
+// Send ETH
+const tx = await signer.sendTransaction({
+  to: recipient,
+  value: ethers.parseEther("0.01")
+});
+await tx.wait(); // wait for confirmation
+
+// Interact with contract
+const contract = new ethers.Contract(addr, ABI, signer);
+const result = await contract.myView();  // free read
+const tx2 = await contract.myWrite(42); // costs gas
+await tx2.wait();</pre>
+    </div>
+    <div class="card">
+      <h3>ABI, Events & Logs</h3>
+      <pre>// ABI = JSON describing all functions + events
+// Events are cheaper than storage (emit in code)
+
+// Listening to events (ethers.js)
+contract.on("Transfer", (from, to, amount) => {
+  console.log(`${from} → ${to}: ${amount}`);
+});
+
+// Query past events
+const filter = contract.filters.Transfer(null, myAddr);
+const events = await contract.queryFilter(filter, -1000);
+
+// Etherscan logs API
+// eth_getLogs({ address, topics, fromBlock, toBlock })</pre>
+    </div>
+    <div class="card">
+      <h3>EIP-1559 Gas Model (Post-London)</h3>
+      <table>
+        <tr><th>Field</th><th>Description</th><th>Who gets it</th></tr>
+        <tr><td>Base Fee</td><td>Protocol-set, adjusts ±12.5%/block</td><td>Burned 🔥</td></tr>
+        <tr><td>Max Fee</td><td>Max you'll pay per gas unit</td><td>Cap</td></tr>
+        <tr><td>Priority Fee</td><td>Tip to validator</td><td>Validator</td></tr>
+      </table>
+      <p style="margin-top:8px">If network full → Base Fee rises → ETH deflationary when used heavily.</p>
+    </div>
+    <div class="card">
+      <h3>Wagmi + viem Cheat Sheet</h3>
+      <pre>// wagmi: React hooks for Web3
+import { useAccount, useBalance, useWriteContract }
+  from 'wagmi'
+
+const { address, isConnected } = useAccount()
+const { data: balance } = useBalance({ address })
+
+// Write to contract
+const { writeContract } = useWriteContract()
+writeContract({
+  address: CONTRACT_ADDR,
+  abi: MY_ABI,
+  functionName: 'mint',
+  args: [1n],
+  value: parseEther('0.01')
+})
+
+// viem: low-level, type-safe
+import { createPublicClient, http } from 'viem'
+const client = createPublicClient({ chain: mainnet,
+  transport: http(RPC_URL) })</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.ethers.org/v6/" target="_blank">Ethers.js v6 Docs</a>
+    <a class="res-link" href="https://viem.sh/" target="_blank">viem Docs</a>
+    <a class="res-link" href="https://wagmi.sh/" target="_blank">Wagmi Docs</a>
+    <a class="res-link" href="https://docs.alchemy.com/reference/ethereum-api-endpoints" target="_blank">Alchemy RPC Reference</a>
+    <a class="res-link" href="https://eips.ethereum.org/EIPS/eip-1559" target="_blank">EIP-1559 Spec</a>
+    <a class="res-link" href="https://ethereum.org/en/developers/docs/evm/" target="_blank">EVM Deep Dive</a>
+    <a class="res-link" href="https://www.evm.codes/" target="_blank">EVM Opcodes Reference</a>
+    <a class="res-link" href="https://rainbowkit.com/docs/introduction" target="_blank">RainbowKit Docs</a>
+  </div>
+</section>
+
+<!-- ═══════════════ WEB3 DEV STACK ═══════════════ -->
+<section class="section theme-eth" id="web3-stack">
+  <div class="section-header">
+    <div class="section-icon">🔧</div>
+    <h2>Web3 Dev Stack</h2>
+    <span class="week-badge">Weeks 1–10</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Full Stack Architecture</h3>
+      <pre>Frontend (React/Next.js)
+   ↕ wagmi / viem / ethers.js
+RPC Provider (Alchemy / Infura)
+   ↕ JSON-RPC
+Blockchain (Ethereum / Solana)
+   ↕ Events / Webhooks
+Indexer (The Graph / Helius)
+   ↕ GraphQL / REST
+Backend API (Express / Node)
+   ↕ REST/WebSocket
+Database (PostgreSQL / Redis)</pre>
+    </div>
+    <div class="card">
+      <h3>RPC Providers Comparison</h3>
+      <table>
+        <tr><th>Provider</th><th>Best For</th><th>Free Tier</th></tr>
+        <tr><td><a href="https://alchemy.com" target="_blank">Alchemy</a></td><td>Ethereum + Solana, best DX</td><td>300M compute/mo</td></tr>
+        <tr><td><a href="https://infura.io" target="_blank">Infura</a></td><td>Enterprise, stable</td><td>100K req/day</td></tr>
+        <tr><td><a href="https://quicknode.com" target="_blank">QuickNode</a></td><td>Speed, global edge</td><td>Limited</td></tr>
+        <tr><td><a href="https://helius.dev" target="_blank">Helius</a></td><td>Solana-specific, webhooks</td><td>100K req/day</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Alchemy SDK</h3>
+      <pre>import { Alchemy, Network } from "alchemy-sdk";
+const alchemy = new Alchemy({
+  apiKey: process.env.ALCHEMY_KEY,
+  network: Network.ETH_MAINNET
+});
+
+// Get token balances (much easier than raw RPC)
+const balances = await alchemy.core
+  .getTokenBalances(address);
+
+// Get NFTs owned by address
+const nfts = await alchemy.nft
+  .getNftsForOwner(address);
+
+// Get tx history
+const txns = await alchemy.core
+  .getAssetTransfers({ fromAddress: addr });</pre>
+    </div>
+    <div class="card">
+      <h3>The Graph — Querying Blockchain Data</h3>
+      <pre>// The Graph: index blockchain events into GraphQL
+// Much faster than scanning raw blocks
+
+// Example: query Uniswap V3 subgraph
+const query = `{
+  pools(first: 5, orderBy: totalValueLockedUSD,
+        orderDirection: desc) {
+    id
+    token0 { symbol }
+    token1 { symbol }
+    totalValueLockedUSD
+    volumeUSD
+  }
+}`;
+
+// Fetch
+const res = await fetch(SUBGRAPH_URL, {
+  method: 'POST',
+  body: JSON.stringify({ query })
+});</pre>
+    </div>
+    <div class="card">
+      <h3>IPFS for Decentralised Storage</h3>
+      <pre>// Content-addressed: address = hash of content
+// ipfs://QmHash → same content always
+
+// Upload via NFT.Storage (free)
+import { NFTStorage, File } from 'nft.storage'
+const client = new NFTStorage({ token: API_KEY })
+
+const metadata = await client.store({
+  name: 'My NFT',
+  description: '...',
+  image: new File([imgData], 'nft.png',
+                 { type: 'image/png' })
+})
+// metadata.url = ipfs://Qm.../metadata.json</pre>
+    </div>
+    <div class="card">
+      <h3>Hardhat Project Structure</h3>
+      <pre>my-project/
+├── contracts/
+│   └── Token.sol
+├── scripts/
+│   └── deploy.js
+├── test/
+│   └── Token.test.js
+├── hardhat.config.js
+└── .env
+
+# Key commands:
+npx hardhat compile
+npx hardhat test
+npx hardhat node          # local blockchain
+npx hardhat run scripts/deploy.js --network sepolia
+npx hardhat verify --network sepolia CONTRACT_ADDR</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.alchemy.com/reference/alchemy-sdk-quickstart" target="_blank">Alchemy SDK Quickstart</a>
+    <a class="res-link" href="https://thegraph.com/docs/en/" target="_blank">The Graph Docs</a>
+    <a class="res-link" href="https://nft.storage/" target="_blank">NFT.Storage</a>
+    <a class="res-link" href="https://hardhat.org/docs" target="_blank">Hardhat Docs</a>
+    <a class="res-link" href="https://docs.pinata.cloud/" target="_blank">Pinata IPFS</a>
+    <a class="res-link" href="https://vercel.com/docs" target="_blank">Vercel Deployment</a>
+  </div>
+</section>
+
+<!-- ═══════════════ SOLIDITY ═══════════════ -->
+<section class="section theme-web3" id="solidity">
+  <div class="section-header">
+    <div class="section-icon">📜</div>
+    <h2>Solidity & Smart Contracts</h2>
+    <span class="week-badge">Weeks 5–10</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Contract Structure</h3>
+      <pre>// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract MyToken is ERC20, Ownable {
+    constructor() ERC20("MyToken", "MTK")
+                  Ownable(msg.sender) {
+        _mint(msg.sender, 1_000_000 * 10**18);
+    }
+
+    function mint(address to, uint amount) public
+                  onlyOwner {
+        _mint(to, amount);
+    }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Function Visibility & Mutability</h3>
+      <table>
+        <tr><th>Keyword</th><th>Meaning</th></tr>
+        <tr><td><code>public</code></td><td>Anyone can call</td></tr>
+        <tr><td><code>external</code></td><td>Outside callers only (cheaper)</td></tr>
+        <tr><td><code>internal</code></td><td>This contract + children</td></tr>
+        <tr><td><code>private</code></td><td>This contract only</td></tr>
+        <tr><td><code>view</code></td><td>Reads state, no gas (via call)</td></tr>
+        <tr><td><code>pure</code></td><td>No state access at all</td></tr>
+        <tr><td><code>payable</code></td><td>Can receive ETH</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Storage vs Memory vs Calldata</h3>
+      <pre>// storage: persistent on blockchain (expensive)
+uint[] public arr; // lives in storage
+
+// memory: temporary, erased after function
+function foo(uint[] memory input) public {
+    uint[] memory temp = new uint[](3); // temp
+}
+
+// calldata: read-only, cheapest for external params
+function bar(uint[] calldata data) external pure {
+    // can't modify data — saves gas
+}
+
+# Gas cost:  calldata < memory << storage (SLOAD/SSTORE)</pre>
+    </div>
+    <div class="card">
+      <h3>Mappings, Events & Modifiers</h3>
+      <pre>mapping(address => uint256) public balances;
+mapping(address => mapping(address => bool)) approved;
+
+event Transfer(
+    address indexed from,  // indexed = searchable
+    address indexed to,
+    uint256 amount
+);
+
+modifier onlyOwner() {
+    require(msg.sender == owner, "Not owner");
+    _;  // continue function execution here
+}
+
+function withdraw() public onlyOwner {
+    payable(owner).transfer(address(this).balance);
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Security: Reentrancy Attack + Fix</h3>
+      <pre>// ❌ VULNERABLE
+function withdraw() public {
+    uint amt = balances[msg.sender];
+    (bool ok,) = msg.sender.call{value: amt}(""); // external call FIRST
+    balances[msg.sender] = 0;  // state update AFTER → attacker re-enters!
+}
+
+// ✅ SECURE — Checks-Effects-Interactions
+function withdraw() public nonReentrant {
+    uint amt = balances[msg.sender];
+    balances[msg.sender] = 0;  // 1. Update state FIRST
+    (bool ok,) = msg.sender.call{value: amt}(""); // 2. Then external call
+    require(ok);
+}
+// Also use: OpenZeppelin ReentrancyGuard</pre>
+    </div>
+    <div class="card">
+      <h3>Common Vulnerabilities Summary</h3>
+      <table>
+        <tr><th>Attack</th><th>Fix</th></tr>
+        <tr><td>Reentrancy</td><td>Checks-Effects-Interactions + nonReentrant</td></tr>
+        <tr><td>Integer overflow</td><td>Auto-checked in Solidity 0.8+</td></tr>
+        <tr><td>tx.origin auth</td><td>Use msg.sender instead</td></tr>
+        <tr><td>Front-running</td><td>Commit-reveal scheme</td></tr>
+        <tr><td>Randomness</td><td>Use Chainlink VRF, not block.timestamp</td></tr>
+        <tr><td>Missing access ctrl</td><td>OpenZeppelin Ownable / AccessControl</td></tr>
+        <tr><td>Unchecked return</td><td>Use require() on low-level calls</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Merkle Tree Whitelist (NFT Minting)</h3>
+      <pre>// Off-chain: generate root
+const { MerkleTree } = require('merkletreejs')
+const leaves = whitelist.map(a => keccak256(a))
+const tree = new MerkleTree(leaves, keccak256, { sort:true })
+const root = tree.getHexRoot()
+
+// Off-chain: generate proof for user
+const proof = tree.getHexProof(keccak256(userAddr))
+
+// On-chain: verify
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+
+bytes32 public merkleRoot;
+mapping(address => bool) public minted;
+
+function mint(bytes32[] calldata proof) external {
+    require(!minted[msg.sender], "Already minted");
+    bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+    require(MerkleProof.verify(proof, merkleRoot, leaf));
+    minted[msg.sender] = true;
+    _mint(msg.sender, tokenId++);
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Hardhat Testing</h3>
+      <pre>const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+describe("Token", () => {
+  let token, owner, user;
+  beforeEach(async () => {
+    [owner, user] = await ethers.getSigners();
+    const Token = await ethers.getContractFactory("Token");
+    token = await Token.deploy(ethers.parseEther("1000"));
+  });
+
+  it("transfers tokens", async () => {
+    await token.transfer(user.address,
+                         ethers.parseEther("100"));
+    expect(await token.balanceOf(user.address))
+      .to.equal(ethers.parseEther("100"));
+  });
+
+  it("reverts on insufficient balance", async () => {
+    await expect(token.connect(user)
+      .transfer(owner.address, 1n))
+      .to.be.revertedWith("ERC20: insufficient balance");
+  });
+});</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://solidity-by-example.org/" target="_blank">Solidity by Example</a>
+    <a class="res-link" href="https://docs.openzeppelin.com/contracts/5.x/" target="_blank">OpenZeppelin Docs</a>
+    <a class="res-link" href="https://hardhat.org/docs" target="_blank">Hardhat Docs</a>
+    <a class="res-link" href="https://remix.ethereum.org/" target="_blank">Remix IDE</a>
+    <a class="res-link" href="https://wizard.openzeppelin.com/" target="_blank">OZ Contract Wizard</a>
+    <a class="res-link" href="https://swcregistry.io/" target="_blank">Smart Contract Weakness Registry</a>
+    <a class="res-link" href="https://github.com/merkletreejs/merkletreejs" target="_blank">merkletreejs Library</a>
+    <a class="res-link" href="https://docs.openzeppelin.com/contracts/5.x/api/utils#MerkleProof" target="_blank">OZ MerkleProof</a>
+  </div>
+</section>
+
+<!-- ═══════════════ TOKENS, NFTS, DEFI ═══════════════ -->
+<section class="section theme-eth" id="tokens">
+  <div class="section-header">
+    <div class="section-icon">🪙</div>
+    <h2>Tokens, NFTs & DeFi Concepts</h2>
+    <span class="week-badge">Weeks 5–8, 17–20</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>ERC20 Interface</h3>
+      <pre>// Core functions
+totalSupply() → uint256
+balanceOf(address) → uint256
+transfer(address to, uint256 amount) → bool
+approve(address spender, uint256 amount) → bool
+allowance(address owner, address spender) → uint256
+transferFrom(address from, address to, uint256 amount) → bool
+
+// Events
+Transfer(address indexed from, address indexed to, uint256 value)
+Approval(address indexed owner, address indexed spender, uint256 value)
+
+// Allowance flow: approve spender → spender calls transferFrom
+// Used in: DEX swaps, staking contracts, lending protocols</pre>
+    </div>
+    <div class="card">
+      <h3>ERC721 (NFT) Interface</h3>
+      <pre>ownerOf(uint256 tokenId) → address
+balanceOf(address owner) → uint256
+tokenURI(uint256 tokenId) → string  // IPFS link
+transferFrom(address from, address to, uint256 tokenId)
+approve(address to, uint256 tokenId)
+setApprovalForAll(address operator, bool approved)
+isApprovedForAll(address owner, address operator) → bool
+
+// Token URI points to JSON metadata:
+{
+  "name": "My NFT #1",
+  "description": "...",
+  "image": "ipfs://Qm.../1.png",
+  "attributes": [{"trait_type": "Rarity","value":"Epic"}]
+}</pre>
+    </div>
+    <div class="card">
+      <h3>AMM Pricing (x * y = k)</h3>
+      <p>No order book. Price set by reserves ratio.</p>
+      <pre>Pool: 100 ETH + 200,000 USDC  →  k = 20,000,000
+Price of ETH = 200,000 / 100 = $2,000
+
+User swaps 1 ETH in:
+  new_x = 101
+  new_y = k / new_x = 20,000,000 / 101 ≈ 198,020
+  USDC out = 200,000 - 198,020 ≈ 1,980 USDC
+  (slightly less than $2000 = price impact)
+
+Larger trade → more price impact (slippage)</pre>
+    </div>
+    <div class="card">
+      <h3>DeFi Concepts Glossary</h3>
+      <table>
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td>DEX</td><td>Decentralised exchange (Uniswap, Orca)</td></tr>
+        <tr><td>LP Token</td><td>Represents your share of a pool</td></tr>
+        <tr><td>Impermanent Loss</td><td>Value loss from price divergence vs holding</td></tr>
+        <tr><td>Slippage</td><td>Expected vs actual price on swap</td></tr>
+        <tr><td>TVL</td><td>Total Value Locked in protocol</td></tr>
+        <tr><td>Yield Farming</td><td>Earning tokens by providing liquidity</td></tr>
+        <tr><td>Flash Loan</td><td>Uncollateralised loan — repaid in same tx</td></tr>
+        <tr><td>Liquidation</td><td>Forced sell when collateral ratio drops</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Uniswap V3 vs V2 — Concentrated Liquidity</h3>
+      <pre>// V2: liquidity spread across all prices 0 → ∞
+// Inefficient: most capital unused
+
+// V3: LPs choose a price range [Pa, Pb]
+// Example: provide ETH/USDC liquidity only
+// between $1,800 and $2,200
+// Capital is 100x more efficient in that range
+
+// If price moves outside range → LP earns 0 fees
+// and holds only the depreciating token
+
+// sqrt(P) trick: V3 uses √price internally
+// for efficient math with concentrated positions
+
+// Your DEX project: implement V2 first (simpler)</pre>
+    </div>
+    <div class="card">
+      <h3>1inch Aggregator Integration</h3>
+      <pre">// 1inch finds best route across all DEXes
+// API call to get quote + calldata
+
+const res = await fetch(
+  `https://api.1inch.dev/swap/v6.0/1/swap?` +
+  `src=0xEEEE...&dst=0xA0b8...` +
+  `&amount=1000000000000000000&from=${walletAddr}` +
+  `&slippage=1`
+);
+const { tx } = await res.json();
+
+// Execute via wallet
+await signer.sendTransaction(tx);</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://uniswap.org/whitepaper.pdf" target="_blank">Uniswap V2 Whitepaper</a>
+    <a class="res-link" href="https://uniswap.org/whitepaper-v3.pdf" target="_blank">Uniswap V3 Whitepaper</a>
+    <a class="res-link" href="https://eips.ethereum.org/EIPS/eip-721" target="_blank">EIP-721 Standard</a>
+    <a class="res-link" href="https://nft.storage/" target="_blank">NFT.Storage (free IPFS)</a>
+    <a class="res-link" href="https://docs.1inch.io/docs/aggregation-protocol/api/swagger" target="_blank">1inch API Docs</a>
+    <a class="res-link" href="https://docs.aave.com/developers/getting-started/readme" target="_blank">Aave Developer Docs</a>
+    <a class="res-link" href="https://docs.uniswap.org/sdk/v3/overview" target="_blank">Uniswap V3 SDK</a>
+  </div>
+</section>
+
+<!-- ═══════════════ L2s ═══════════════ -->
+<section class="section theme-eth" id="l2">
+  <div class="section-header">
+    <div class="section-icon">🚀</div>
+    <h2>Layer 2s & Bridges</h2>
+    <span class="week-badge">Background knowledge</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>L2 Rollup Types</h3>
+      <table>
+        <tr><th>Type</th><th>How</th><th>Example</th><th>Withdrawal</th></tr>
+        <tr><td>Optimistic</td><td>Assume valid, fraud proof if wrong</td><td>Arbitrum, Optimism</td><td>~7 days</td></tr>
+        <tr><td>ZK Rollup</td><td>Validity proof (ZK-SNARK/STARK)</td><td>zkSync, StarkNet, Polygon zkEVM</td><td>Minutes</td></tr>
+      </table>
+      <p style="margin-top:8px">Both post compressed txn data to L1 (Ethereum) → inherit L1 security.</p>
+    </div>
+    <div class="card">
+      <h3>Cross-Chain Bridges (Wormhole)</h3>
+      <pre>// Wormhole: multi-chain messaging protocol
+// Used by: Solana ↔ Ethereum ↔ Polygon etc.
+
+// How it works:
+1. Lock token on source chain
+2. "Guardian" nodes observe + attest (VAA)
+3. Redeem on destination chain
+
+// VAA = Verifiable Action Approval
+// Signed by 2/3+ of 19 Guardian nodes
+
+// In Solana programs:
+// wormhole-sdk handles cross-chain messages
+// Critical: verify VAA before acting on it!</pre>
+    </div>
+    <div class="card">
+      <h3>Why L2s Matter for Your Job Search</h3>
+      <ul>
+        <li>Most new dApps deploy on Arbitrum/Optimism first (cheaper gas)</li>
+        <li>Wormhole is a Tier 1 target — knowing cross-chain is a real edge</li>
+        <li>zkSync/StarkNet hiring is booming — ZK knowledge = premium salary</li>
+        <li>Your React wallet UI should support multiple chains (wagmi makes this easy)</li>
+      </ul>
+      <div class="callout"><strong>Action:</strong> Deploy your wallet UI on Arbitrum Sepolia testnet alongside Ethereum Sepolia — shows multi-chain awareness.</div>
+    </div>
+    <div class="card">
+      <h3>Account Abstraction (ERC-4337)</h3>
+      <pre">// Traditional: EOA must sign every tx + pay gas
+// AA: smart contract wallet — programmable rules
+
+// Use cases:
+// - Gasless txns (sponsored by dApp)
+// - Social recovery (no seed phrase loss)
+// - Batch txns (one click = multiple actions)
+// - Spending limits, session keys
+
+// Biconomy (your Tier 2 target) is a major AA infra provider
+// UserOperation replaces traditional transactions
+// EntryPoint contract validates + executes ops
+
+// Stack: ERC-4337 + Biconomy SDK + Paymaster</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://l2beat.com/" target="_blank">L2Beat (L2 analytics)</a>
+    <a class="res-link" href="https://docs.wormhole.com/wormhole" target="_blank">Wormhole Docs</a>
+    <a class="res-link" href="https://docs.biconomy.io/" target="_blank">Biconomy (AA) Docs</a>
+    <a class="res-link" href="https://eips.ethereum.org/EIPS/eip-4337" target="_blank">ERC-4337 Spec</a>
+    <a class="res-link" href="https://docs.arbitrum.io/for-devs/quickstart-solidity-hardhat" target="_blank">Arbitrum Dev Quickstart</a>
+  </div>
+</section>
+
+<!-- ═══════════════ SOLANA ARCHITECTURE ═══════════════ -->
+<section class="section theme-sol" id="solana-arch">
+  <div class="section-header">
+    <div class="section-icon">◎</div>
+    <h2>Solana Architecture</h2>
+    <span class="week-badge">Weeks 13–14</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Solana vs Ethereum — Key Differences</h3>
+      <table>
+        <tr><th></th><th>Ethereum</th><th>Solana</th></tr>
+        <tr><td>TPS</td><td>~15 (L1)</td><td>~65,000</td></tr>
+        <tr><td>Block time</td><td>~12s</td><td>~400ms</td></tr>
+        <tr><td>Avg fee</td><td>$0.50–$50+</td><td>~$0.00025</td></tr>
+        <tr><td>Smart contract lang</td><td>Solidity</td><td>Rust (Anchor)</td></tr>
+        <tr><td>State model</td><td>Code+state together</td><td>Code and state separated</td></tr>
+        <tr><td>Parallelism</td><td>Sequential (mostly)</td><td>Parallel (Sealevel VM)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Account Model — The Critical Difference</h3>
+      <pre>// Solana: EVERYTHING is an account
+Account = {
+  lamports:   u64,      // SOL balance (1 SOL = 10^9)
+  data:       Vec&lt;u8&gt;,  // State/code stored here
+  owner:      Pubkey,   // Program that manages this
+  executable: bool,     // true = this IS a program
+  rent_epoch: u64       // rent exemption info
+}
+
+// Ethereum: Contract owns its own storage
+// Solana: Program (code) is STATELESS
+//         State lives in separate data accounts
+//         owned BY the program
+
+// Example: Token program owns all token accounts
+// Your wallet has a "token account" for each SPL token</pre>
+    </div>
+    <div class="card">
+      <h3>PDAs — Program Derived Addresses</h3>
+      <pre">// PDA = deterministic address with NO private key
+// Programs can "sign" for PDAs using seeds
+
+// Derive a PDA:
+let seeds = [b"escrow", user.key().as_ref(), &[bump]];
+let (pda, bump) = Pubkey::find_program_address(
+    &[b"escrow", user.key().as_ref()],
+    &program_id
+);
+
+// Why PDAs matter:
+// - Programs can hold funds (like a contract holding ETH)
+// - Trustless escrow: no private key = nobody can steal
+// - Deterministic: derive same PDA anywhere
+// - CPIs: program signs for PDA using seeds
+
+// Common seed patterns:
+[b"vault", user.key()]         // user-specific vault
+[b"config"]                    // global config account
+[b"metadata", mint.key()]      // token metadata</pre>
+    </div>
+    <div class="card">
+      <h3>SPL Tokens — Solana's ERC20</h3>
+      <pre>// 3 types of accounts involved:
+// 1. Mint Account — defines token (supply, decimals, authorities)
+// 2. Token Account — holds a user's balance (owned by token program)
+// 3. Associated Token Account (ATA) — standard 1-per-user-per-token
+
+// Create token (CLI)
+spl-token create-token --decimals 6
+
+// Create ATA for your wallet
+spl-token create-account &lt;MINT_ADDRESS&gt;
+
+// Mint supply
+spl-token mint &lt;MINT&gt; 1000000
+
+// In Anchor: use anchor_spl::token
+use anchor_spl::token::{Token, TokenAccount, Mint,
+                         mint_to, transfer, burn};</pre>
+    </div>
+    <div class="card">
+      <h3>Sealevel — Parallel Execution</h3>
+      <ul>
+        <li>Transactions declare all accounts they'll read/write upfront</li>
+        <li>Sealevel scheduler runs non-overlapping txns in <strong>parallel</strong></li>
+        <li>Txns touching different accounts = run simultaneously</li>
+        <li>This is why Solana achieves high TPS vs sequential EVM</li>
+        <li>As developer: declare accounts precisely → enables parallelism</li>
+      </ul>
+      <div class="callout"><strong>Intel connection:</strong> This is parallel execution scheduling — same concepts as multi-core CPU dispatch. Your systems background gives you intuition here that most Web3 devs lack.</div>
+    </div>
+    <div class="card">
+      <h3>Rent & Account Lifecycle</h3>
+      <pre">// Solana charges rent for storing data on-chain
+// Accounts must maintain minimum balance OR get garbage collected
+
+// Rent-exempt minimum ≈ 2 years of rent paid upfront
+// Most accounts: ~0.002 SOL for 200 bytes
+
+// In Anchor: always add rent-exempt balance when creating accounts
+#[account(
+    init,
+    payer = user,
+    space = 8 + 32 + 8,  // discriminator + Pubkey + u64
+)]
+
+// Close an account (reclaim rent):
+#[account(mut, close = receiver)]  // sends lamports to receiver
+pub my_account: Account&lt;'info, MyData&gt;,</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://solana.com/developers" target="_blank">Solana Dev Portal</a>
+    <a class="res-link" href="https://solanacookbook.com/" target="_blank">Solana Cookbook</a>
+    <a class="res-link" href="https://docs.solanalabs.com/" target="_blank">Solana Labs Docs</a>
+    <a class="res-link" href="https://spl.solana.com/token" target="_blank">SPL Token Docs</a>
+    <a class="res-link" href="https://solana.com/docs/core/accounts" target="_blank">Accounts Deep Dive</a>
+    <a class="res-link" href="https://solanacookbook.com/core-concepts/pdas.html" target="_blank">PDA Cookbook</a>
+    <a class="res-link" href="https://faucet.solana.com/" target="_blank">Solana Devnet Faucet</a>
+  </div>
+</section>
+
+<!-- ═══════════════ ANCHOR ═══════════════ -->
+<section class="section theme-sol" id="anchor">
+  <div class="section-header">
+    <div class="section-icon">⚓</div>
+    <h2>Anchor Framework</h2>
+    <span class="week-badge">Weeks 14–16</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Full Anchor Program Structure</h3>
+      <pre>use anchor_lang::prelude::*;
+
+declare_id!("YourProgramIDHere...");
+
+#[program]
+pub mod escrow {
+    use super::*;
+    pub fn initialize(ctx: Context&lt;Initialize&gt;,
+                      amount: u64) -> Result&lt;()&gt; {
+        let state = &mut ctx.accounts.escrow_state;
+        state.initializer = ctx.accounts.initializer.key();
+        state.amount = amount;
+        state.bump = ctx.bumps.escrow_state;
+        Ok(())
+    }
+    pub fn exchange(ctx: Context&lt;Exchange&gt;) -> Result&lt;()&gt; {
+        // CPI: transfer tokens
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct Initialize&lt;'info&gt; {
+    #[account(
+        init, payer = initializer,
+        space = 8 + EscrowState::INIT_SPACE,
+        seeds = [b"escrow", initializer.key().as_ref()],
+        bump
+    )]
+    pub escrow_state: Account&lt;'info, EscrowState&gt;,
+    #[account(mut)]
+    pub initializer: Signer&lt;'info&gt;,
+    pub system_program: Program&lt;'info, System&gt;,
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct EscrowState {
+    pub initializer: Pubkey,
+    pub amount: u64,
+    pub bump: u8,
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Account Constraints Reference</h3>
+      <pre">// Create new account
+#[account(init, payer=user, space=8+MyData::INIT_SPACE)]
+
+// Create PDA
+#[account(
+    init, payer=user, space=8+32,
+    seeds=[b"seed", user.key().as_ref()], bump
+)]
+
+// Mutable account
+#[account(mut)]
+
+// Validate field equality
+#[account(has_one = authority @ ErrorCode::Unauthorized)]
+
+// Validate with custom expression
+#[account(constraint = amount > 0 @ ErrorCode::ZeroAmount)]
+
+// Close account + refund rent
+#[account(mut, close = receiver)]
+
+// Token account constraints (anchor_spl)
+#[account(
+    mut,
+    associated_token::mint = mint,
+    associated_token::authority = user
+)]</pre>
+    </div>
+    <div class="card">
+      <h3>CPI — Transfer SPL Tokens</h3>
+      <pre">use anchor_spl::token::{self, Transfer, Token};
+
+pub fn exchange(ctx: Context&lt;Exchange&gt;) -> Result&lt;()&gt; {
+    // Seeds for PDA signing
+    let seeds = &[
+        b"escrow",
+        ctx.accounts.initializer.key.as_ref(),
+        &[ctx.accounts.escrow_state.bump]
+    ];
+    let signer_seeds = &[&seeds[..]];
+
+    let cpi_accounts = Transfer {
+        from:      ctx.accounts.vault.to_account_info(),
+        to:        ctx.accounts.taker_ata.to_account_info(),
+        authority: ctx.accounts.escrow_state.to_account_info(),
+    };
+    let cpi_ctx = CpiContext::new_with_signer(
+        ctx.accounts.token_program.to_account_info(),
+        cpi_accounts,
+        signer_seeds  // PDA signs!
+    );
+    token::transfer(cpi_ctx, ctx.accounts.escrow_state.amount)?;
+    Ok(())
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Anchor Testing (TypeScript)</h3>
+      <pre">import * as anchor from "@coral-xyz/anchor";
+import { BN } from "@coral-xyz/anchor";
+import { assert } from "chai";
+
+describe("escrow", () => {
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
+  const program = anchor.workspace.Escrow;
+  const user = provider.wallet;
+
+  it("initializes escrow", async () => {
+    const [escrowPda] = anchor.web3.PublicKey
+      .findProgramAddressSync(
+        [Buffer.from("escrow"), user.publicKey.toBuffer()],
+        program.programId
+      );
+
+    await program.methods.initialize(new BN(1_000_000))
+      .accounts({
+        escrowState: escrowPda,
+        initializer: user.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    const state = await program.account.escrowState
+                                       .fetch(escrowPda);
+    assert.equal(state.amount.toNumber(), 1_000_000);
+  });
+});</pre>
+    </div>
+    <div class="card">
+      <h3>Error Handling</h3>
+      <pre">#[error_code]
+pub enum EscrowError {
+    #[msg("Amount must be greater than zero")]
+    ZeroAmount,
+    #[msg("You are not authorized to perform this action")]
+    Unauthorized,
+    #[msg("Escrow has already been initialized")]
+    AlreadyInitialized,
+}
+
+// Usage in instruction:
+require!(amount > 0, EscrowError::ZeroAmount);
+require_keys_eq!(
+    ctx.accounts.authority.key(),
+    ctx.accounts.state.authority,
+    EscrowError::Unauthorized
+);
+require!(!state.initialized, EscrowError::AlreadyInitialized);</pre>
+    </div>
+    <div class="card">
+      <h3>Space Calculation Reference</h3>
+      <div class="cheat">
+        <strong>8</strong> — discriminator (always, every account)<br>
+        <strong>+1</strong> — bool / u8 / i8<br>
+        <strong>+2</strong> — u16 / i16<br>
+        <strong>+4</strong> — u32 / i32<br>
+        <strong>+8</strong> — u64 / i64 / f64<br>
+        <strong>+16</strong> — u128 / i128<br>
+        <strong>+32</strong> — Pubkey<br>
+        <strong>+4 + len</strong> — String (4 bytes for length prefix)<br>
+        <strong>+4 + (n × size)</strong> — Vec&lt;T&gt;<br>
+        <strong>+1 + size</strong> — Option&lt;T&gt;<br><br>
+        Use <code>#[derive(InitSpace)]</code> to auto-calculate.
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://www.anchor-lang.com/" target="_blank">Anchor Lang Docs</a>
+    <a class="res-link" href="https://book.anchor-lang.com/" target="_blank">Anchor Book</a>
+    <a class="res-link" href="https://paulx.dev/blog/2021/01/14/programming-on-solana-an-introduction/" target="_blank">PaulX Escrow Tutorial</a>
+    <a class="res-link" href="https://beta.solpg.io/" target="_blank">Solana Playground (browser IDE)</a>
+    <a class="res-link" href="https://github.com/coral-xyz/anchor/tree/master/tests" target="_blank">Anchor Test Examples (GitHub)</a>
+    <a class="res-link" href="https://www.anchor-lang.com/docs/pdas" target="_blank">Anchor PDA Guide</a>
+    <a class="res-link" href="https://docs.rs/anchor-lang/latest/anchor_lang/" target="_blank">anchor-lang crate docs</a>
+  </div>
+</section>
+
+<!-- ═══════════════ SOLANA DEFI ═══════════════ -->
+<section class="section theme-sol" id="solana-defi">
+  <div class="section-header">
+    <div class="section-icon">🌊</div>
+    <h2>Solana DeFi Primitives</h2>
+    <span class="week-badge">Weeks 17–22</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Solana AMM Architecture (Orca/Raydium)</h3>
+      <pre>// Pool accounts structure:
+PoolState {
+    token_a_mint: Pubkey,
+    token_b_mint: Pubkey,
+    vault_a: Pubkey,      // PDA-controlled token accounts
+    vault_b: Pubkey,
+    lp_mint: Pubkey,      // LP token mint
+    fee_rate: u64,        // e.g. 3000 = 0.3%
+    sqrt_price: u128,     // V3: current sqrt price
+    liquidity: u128,
+}
+
+// Swap instruction flow:
+// 1. Calculate amount_out using x*y=k
+// 2. Deduct protocol fee
+// 3. CPI: transfer token_in from user → vault_a
+// 4. CPI: transfer token_out from vault_b → user
+// (atomic — reverts if any step fails)</pre>
+    </div>
+    <div class="card">
+      <h3>Helius Webhooks for Indexing</h3>
+      <pre">// Register webhook (Helius dashboard or API)
+POST https://api.helius.xyz/v0/webhooks
+{
+  "webhookURL": "https://your-api.com/webhook",
+  "transactionTypes": ["SWAP", "NFT_SALE", "TRANSFER"],
+  "accountAddresses": ["your_program_id_here"],
+  "webhookType": "enhanced"
+}
+
+// Your Express endpoint receives:
+app.post('/webhook', (req, res) => {
+  const events = req.body;
+  for (const event of events) {
+    console.log(event.type);     // "SWAP"
+    console.log(event.tokenTransfers);
+    // Store in PostgreSQL
+    await db.query(
+      'INSERT INTO events VALUES($1,$2,$3)',
+      [event.signature, event.type, event.timestamp]
+    );
+  }
+  res.status(200).send('ok');
+});</pre>
+    </div>
+    <div class="card">
+      <h3>NFT Marketplace on Solana</h3>
+      <pre">// Listing: escrow NFT in PDA vault
+pub fn list_nft(ctx: Context&lt;ListNft&gt;,
+                price: u64) -> Result&lt;()&gt; {
+    // 1. Create listing account (PDA)
+    let listing = &mut ctx.accounts.listing;
+    listing.seller = ctx.accounts.seller.key();
+    listing.nft_mint = ctx.accounts.nft_mint.key();
+    listing.price = price;
+
+    // 2. Transfer NFT to vault (PDA-controlled ATA)
+    token::transfer(cpi_ctx, 1)?;
+    Ok(())
+}
+
+// Buy: atomic swap SOL ↔ NFT
+pub fn buy_nft(ctx: Context&lt;BuyNft&gt;) -> Result&lt;()&gt; {
+    let price = ctx.accounts.listing.price;
+    // 1. Transfer SOL buyer → seller
+    system_program::transfer(cpi_ctx, price)?;
+    // 2. Transfer NFT vault → buyer
+    token::transfer(cpi_ctx_signed, 1)?;
+    // 3. Close listing account (reclaim rent)
+    Ok(())
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Metaplex Token Metadata</h3>
+      <pre">// Every NFT on Solana has a Metadata account
+// managed by Metaplex's Token Metadata Program
+
+Metadata Account (PDA of mint):
+{
+  name: "My NFT",
+  symbol: "MNFT",
+  uri: "https://arweave.net/...",  // JSON metadata
+  seller_fee_basis_points: 500,   // 5% royalty
+  creators: [
+    { address: creator_pubkey, share: 100, verified: true }
+  ],
+  collection: { verified: true, key: collection_mint }
+}
+
+// Use: @metaplex-foundation/mpl-token-metadata (TypeScript)
+// or mpl-token-metadata crate (Rust/Anchor CPI)</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://github.com/orca-so/whirlpools" target="_blank">Orca Whirlpools (AMM source)</a>
+    <a class="res-link" href="https://docs.helius.dev/webhooks-and-websockets/webhooks" target="_blank">Helius Webhooks Docs</a>
+    <a class="res-link" href="https://docs.metaplex.com/programs/token-metadata/" target="_blank">Metaplex Token Metadata</a>
+    <a class="res-link" href="https://github.com/tensor-oss/tensorswap-sdk" target="_blank">Tensor Marketplace SDK</a>
+    <a class="res-link" href="https://docs.helius.dev/compression-and-das-api/digital-asset-standard-api" target="_blank">Helius DAS API</a>
+  </div>
+</section>
+
+<!-- ═══════════════ SOLANA TOOLING ═══════════════ -->
+<section class="section theme-sol" id="solana-tooling">
+  <div class="section-header">
+    <div class="section-icon">🛠️</div>
+    <h2>Solana Tooling</h2>
+    <span class="week-badge">Weeks 13–16</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Solana CLI Reference</h3>
+      <pre"># Config
+solana config set --url devnet
+solana config set --url mainnet-beta
+solana config get
+
+# Wallet
+solana-keygen new --outfile ~/.config/solana/id.json
+solana address
+solana balance
+
+# Airdrop (devnet only)
+solana airdrop 2
+
+# Deploy program
+anchor build
+anchor deploy
+
+# SPL Token
+spl-token create-token --decimals 6
+spl-token create-account &lt;MINT&gt;
+spl-token mint &lt;MINT&gt; 1000000
+spl-token balance &lt;MINT&gt;</pre>
+    </div>
+    <div class="card">
+      <h3>Solana Web3.js Cheat Sheet</h3>
+      <pre">import {
+  Connection, PublicKey, Keypair,
+  Transaction, SystemProgram, LAMPORTS_PER_SOL
+} from '@solana/web3.js';
+
+const conn = new Connection(
+  'https://api.devnet.solana.com', 'confirmed'
+);
+
+// Get balance
+const bal = await conn.getBalance(pubkey);
+console.log(bal / LAMPORTS_PER_SOL);
+
+// Airdrop (devnet)
+await conn.requestAirdrop(pubkey, LAMPORTS_PER_SOL);
+
+// Transfer SOL
+const tx = new Transaction().add(
+  SystemProgram.transfer({
+    fromPubkey: sender.publicKey,
+    toPubkey: recipient,
+    lamports: 0.01 * LAMPORTS_PER_SOL
+  })
+);
+await sendAndConfirmTransaction(conn, tx, [sender]);</pre>
+    </div>
+    <div class="card">
+      <h3>Wallet Adapter (React)</h3>
+      <pre">// Setup in _app.tsx
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets'
+import { ConnectionProvider, WalletProvider }
+  from '@solana/wallet-adapter-react'
+import { WalletModalProvider } from
+  '@solana/wallet-adapter-react-ui'
+
+const App = ({ Component, pageProps }) => {
+  const network = WalletAdapterNetwork.Devnet;
+  const endpoint = clusterApiUrl(network);
+  const wallets = [new PhantomWalletAdapter()];
+
+  return (
+    &lt;ConnectionProvider endpoint={endpoint}&gt;
+      &lt;WalletProvider wallets={wallets} autoConnect&gt;
+        &lt;WalletModalProvider&gt;
+          &lt;Component {...pageProps} /&gt;
+        &lt;/WalletModalProvider&gt;
+      &lt;/WalletProvider&gt;
+    &lt;/ConnectionProvider&gt;
+  );
+};</pre>
+    </div>
+    <div class="card">
+      <h3>Solana Explorer & Debugging</h3>
+      <ul>
+        <li><a href="https://explorer.solana.com/?cluster=devnet" target="_blank">Solana Explorer</a> — inspect txns, accounts, programs</li>
+        <li><a href="https://solscan.io/" target="_blank">Solscan</a> — better UX, token analytics</li>
+        <li><a href="https://beta.solpg.io/" target="_blank">Solana Playground</a> — browser-based IDE, no setup</li>
+        <li><code>anchor test --skip-local-validator</code> — run tests faster</li>
+        <li><code>solana logs</code> — stream program logs in real-time</li>
+        <li><code>msg!("Debug: {}", value)</code> — print in Anchor program</li>
+      </ul>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://solana-labs.github.io/solana-web3.js/" target="_blank">Solana Web3.js Docs</a>
+    <a class="res-link" href="https://github.com/solana-labs/wallet-adapter" target="_blank">Wallet Adapter GitHub</a>
+    <a class="res-link" href="https://docs.solanalabs.com/cli/usage" target="_blank">Solana CLI Reference</a>
+    <a class="res-link" href="https://explorer.solana.com/" target="_blank">Solana Explorer</a>
+    <a class="res-link" href="https://solscan.io/" target="_blank">Solscan</a>
+  </div>
+</section>
+
+<!-- ═══════════════ RUST ═══════════════ -->
+<section class="section theme-rust" id="rust">
+  <div class="section-header">
+    <div class="section-icon">🦀</div>
+    <h2>Rust Programming</h2>
+    <span class="week-badge">Weeks 11–12</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Ownership — The Core Concept</h3>
+      <pre">// Rule 1: Every value has one owner
+// Rule 2: Only one owner at a time
+// Rule 3: When owner goes out of scope → value dropped
+
+let s1 = String::from("hello");
+let s2 = s1;         // s1 MOVED to s2
+// println!("{}", s1); → COMPILE ERROR
+
+let s3 = s2.clone(); // Deep copy — both valid
+println!("{} {}", s2, s3); // ✅
+
+// Stack types (Copy trait): i32, bool, f64, etc.
+let x = 5;
+let y = x;  // Copied, not moved
+println!("{} {}", x, y); // ✅ (no move)</pre>
+    </div>
+    <div class="card">
+      <h3>Borrowing & References</h3>
+      <pre">// Immutable borrow — many allowed
+fn print_len(s: &String) { println!("{}", s.len()); }
+// s still valid after call — no ownership transfer
+
+// Mutable borrow — ONLY ONE at a time
+fn add_suffix(s: &mut String) { s.push_str("!"); }
+
+let mut s = String::from("hello");
+let r1 = &s;          // immutable borrow
+let r2 = &s;          // another immutable borrow ✅
+// let r3 = &mut s;   // ❌ can't mix mutable + immutable
+println!("{} {}", r1, r2);  // r1, r2 used here → ok to borrow mut after
+let r3 = &mut s;             // ✅ now allowed
+
+// Lifetimes: ensure references don't outlive data
+fn longest&lt;'a&gt;(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() { x } else { y }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>Error Handling</h3>
+      <pre">// Result&lt;T, E&gt; — recoverable errors
+fn read_file(path: &str) -> Result&lt;String, io::Error&gt; {
+    let content = fs::read_to_string(path)?; // ? propagates
+    Ok(content)
+}
+
+// Option&lt;T&gt; — might be absent
+fn find_user(id: u32) -> Option&lt;&User&gt; {
+    users.iter().find(|u| u.id == id)
+}
+
+// Pattern matching (exhaustive!)
+match result {
+    Ok(val)  => println!("Got: {}", val),
+    Err(e)   => eprintln!("Error: {}", e),
+}
+
+// Shortcuts
+let val = result.unwrap_or(default);
+let val = result.expect("custom panic message");
+let opt = option.unwrap_or_else(|| compute_default());</pre>
+    </div>
+    <div class="card">
+      <h3>Structs, Enums & Impl</h3>
+      <pre">struct User {
+    name: String,
+    age: u32,
+    active: bool,
+}
+
+impl User {
+    // Associated function (no self = "static")
+    fn new(name: &str, age: u32) -> User {
+        User { name: name.to_string(), age, active: true }
+    }
+    // Method (takes self)
+    fn greet(&self) -> String {
+        format!("Hi, I'm {}", self.name)
+    }
+    fn deactivate(&mut self) { self.active = false; }
+}
+
+// Enums with data (like Rust's Option/Result)
+enum Shape { Circle(f64), Rectangle(f64, f64) }
+
+let area = match shape {
+    Shape::Circle(r)       => std::f64::consts::PI * r * r,
+    Shape::Rectangle(w, h) => w * h,
+};</pre>
+    </div>
+    <div class="card">
+      <h3>Traits — Rust's Interface System</h3>
+      <pre">trait Summary {
+    fn summarize(&self) -> String;
+    fn preview(&self) -> String {  // default impl
+        format!("{}...", &self.summarize()[..50])
+    }
+}
+
+struct Article { title: String, content: String }
+impl Summary for Article {
+    fn summarize(&self) -> String {
+        format!("{}: {}", self.title, self.content)
+    }
+}
+
+// Generics with trait bounds
+fn notify&lt;T: Summary&gt;(item: &T) {
+    println!("{}", item.summarize());
+}
+
+// Important traits to know:
+// Display, Debug, Clone, Copy, PartialEq
+// Iterator, From/Into, Default, Send, Sync</pre>
+    </div>
+    <div class="card">
+      <h3>Iterators & Closures</h3>
+      <pre">let nums = vec![1, 2, 3, 4, 5];
+
+// map, filter, collect — like JS array methods
+let doubled: Vec&lt;i32&gt; = nums.iter()
+    .map(|x| x * 2)
+    .collect();
+
+let evens: Vec&lt;&i32&gt; = nums.iter()
+    .filter(|&&x| x % 2 == 0)
+    .collect();
+
+let sum: i32 = nums.iter().sum();
+
+// Chaining (lazy — only executes on collect/sum)
+let result: Vec&lt;_&gt; = (0..100)
+    .filter(|x| x % 2 == 0)
+    .map(|x| x * x)
+    .take(5)
+    .collect();  // [0, 4, 16, 36, 64]</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://doc.rust-lang.org/book/" target="_blank">The Rust Book (official)</a>
+    <a class="res-link" href="https://rustlings.cool/" target="_blank">Rustlings (exercises)</a>
+    <a class="res-link" href="https://doc.rust-lang.org/rust-by-example/" target="_blank">Rust by Example</a>
+    <a class="res-link" href="https://exercism.org/tracks/rust" target="_blank">Exercism Rust Track</a>
+    <a class="res-link" href="https://play.rust-lang.org/" target="_blank">Rust Playground</a>
+    <a class="res-link" href="https://doc.rust-lang.org/std/" target="_blank">Rust Standard Library</a>
+    <a class="res-link" href="https://docs.rs/" target="_blank">docs.rs (all crate docs)</a>
+  </div>
+</section>
+
+<!-- ═══════════════ RUST PATTERNS ═══════════════ -->
+<section class="section theme-rust" id="rust-patterns">
+  <div class="section-header">
+    <div class="section-icon">🧩</div>
+    <h2>Rust Patterns for Anchor</h2>
+    <span class="week-badge">Weeks 11–16</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>HashMap & Common Collections</h3>
+      <pre">use std::collections::HashMap;
+
+let mut scores: HashMap&lt;String, u32&gt; = HashMap::new();
+scores.insert(String::from("Alice"), 100);
+
+// Get value
+let score = scores.get("Alice"); // Option&lt;&u32&gt;
+
+// Insert only if key absent
+scores.entry(String::from("Bob")).or_insert(50);
+
+// Iterate
+for (name, score) in &scores {
+    println!("{}: {}", name, score);
+}
+
+// Vec operations
+let mut v = vec![3, 1, 4, 1, 5, 9];
+v.sort();
+v.dedup();           // remove consecutive duplicates
+v.retain(|&x| x > 3); // keep only >3
+println!("{:?}", v); // [4, 5, 9]</pre>
+    </div>
+    <div class="card">
+      <h3>Async / Await & Tokio</h3>
+      <pre">#[tokio::main]
+async fn main() -> Result&lt;()&gt; {
+    let data = fetch_data("https://api.example.com").await?;
+    println!("{}", data);
+    Ok(())
+}
+
+async fn fetch_data(url: &str) -> Result&lt;String, reqwest::Error&gt; {
+    let client = reqwest::Client::new();
+    let resp = client.get(url).send().await?;
+    let text = resp.text().await?;
+    Ok(text)
+}
+
+// Concurrent requests
+let (result1, result2) = tokio::join!(
+    fetch_data(url1),
+    fetch_data(url2)
+);
+// Note: Anchor programs are synchronous — async is for CLI/test clients</pre>
+    </div>
+    <div class="card">
+      <h3>Serialization with Serde</h3>
+      <pre">use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct TokenPrice {
+    symbol: String,
+    price: f64,
+    change_24h: f64,
+}
+
+// JSON → struct
+let json = r#"{"symbol":"SOL","price":145.0,"change_24h":2.5}"#;
+let token: TokenPrice = serde_json::from_str(json)?;
+
+// struct → JSON
+let json_str = serde_json::to_string_pretty(&token)?;
+
+// In Anchor: Serde is used for instruction data
+// Borsh is used for account serialisation (faster, deterministic)</pre>
+    </div>
+    <div class="card">
+      <h3>Reading Rust Compiler Errors</h3>
+      <div class="cheat">
+        <strong>error[E0382]: use of moved value</strong><br>
+        → You moved a value and tried to use it. Clone or borrow instead.<br><br>
+        <strong>error[E0502]: cannot borrow as mutable because it is also borrowed as immutable</strong><br>
+        → Drop the immutable borrow before taking a mutable one.<br><br>
+        <strong>error[E0308]: mismatched types</strong><br>
+        → Check Result vs value, &str vs String, u64 vs i64.<br><br>
+        <strong>error[E0277]: trait bound not satisfied</strong><br>
+        → Add required trait impl or derive macro.<br><br>
+        <em>The compiler is your best teacher — read errors carefully, they tell you exactly what to fix.</em>
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.rs/reqwest/latest/reqwest/" target="_blank">reqwest crate</a>
+    <a class="res-link" href="https://docs.rs/serde/latest/serde/" target="_blank">Serde docs</a>
+    <a class="res-link" href="https://tokio.rs/tokio/tutorial" target="_blank">Tokio Tutorial</a>
+    <a class="res-link" href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html" target="_blank">Rust Ownership Chapter</a>
+  </div>
+</section>
+
+<!-- ═══════════════ DSA SECTIONS ═══════════════ -->
+<section class="section theme-dsa" id="arrays">
+  <div class="section-header">
+    <div class="section-icon">🔢</div>
+    <h2>Arrays & Strings</h2>
+    <span class="week-badge">Weeks 1, 3</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Two Pointers</h3>
+      <pre">### Two Sum (sorted) — O(n)
+left, right = 0, len-1
+while left < right:
+    s = arr[left] + arr[right]
+    if s == target: return [left, right]
+    elif s < target: left += 1
+    else: right -= 1
+
+### Valid Palindrome — O(n)
+def isPalindrome(s):
+    s = ''.join(c.lower() for c in s if c.isalnum())
+    l, r = 0, len(s) - 1
+    while l < r:
+        if s[l] != s[r]: return False
+        l += 1; r -= 1
+    return True</pre>
+    </div>
+    <div class="card">
+      <h3>Sliding Window</h3>
+      <pre">### Longest Substring Without Repeats — O(n)
+def lengthOfLongestSubstring(s):
+    seen = {}
+    left = max_len = 0
+    for right, c in enumerate(s):
+        if c in seen and seen[c] >= left:
+            left = seen[c] + 1
+        seen[c] = right
+        max_len = max(max_len, right - left + 1)
+    return max_len
+
+### Max Sum Subarray of size k
+def maxSumSubarray(arr, k):
+    window = sum(arr[:k])
+    max_sum = window
+    for i in range(k, len(arr)):
+        window += arr[i] - arr[i-k]
+        max_sum = max(max_sum, window)
+    return max_sum</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://neetcode.io/roadmap" target="_blank">NeetCode Roadmap</a>
+    <a class="res-link" href="https://leetcode.com/tag/two-pointers/" target="_blank">Two Pointers Tag</a>
+    <a class="res-link" href="https://leetcode.com/tag/sliding-window/" target="_blank">Sliding Window Tag</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="hashmaps">
+  <div class="section-header">
+    <div class="section-icon">🗺️</div>
+    <h2>Hash Maps & Sets</h2>
+    <span class="week-badge">Week 2</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Core Patterns</h3>
+      <pre">### Two Sum — O(n)
+def twoSum(nums, target):
+    seen = {}  # {value: index}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+
+### Group Anagrams — O(n * k)
+from collections import defaultdict
+def groupAnagrams(strs):
+    groups = defaultdict(list)
+    for s in strs:
+        key = tuple(sorted(s))
+        groups[key].append(s)
+    return list(groups.values())</pre>
+    </div>
+    <div class="card">
+      <h3>Frequency & Existence Patterns</h3>
+      <pre">from collections import Counter
+
+### Valid Anagram
+def isAnagram(s, t):
+    return Counter(s) == Counter(t)
+
+### First Unique Character
+def firstUniqChar(s):
+    count = Counter(s)
+    for i, c in enumerate(s):
+        if count[c] == 1: return i
+    return -1
+
+### Longest Consecutive Sequence — O(n)
+def longestConsecutive(nums):
+    s = set(nums)
+    best = 0
+    for n in s:
+        if n-1 not in s:  # start of sequence
+            cur = n; length = 1
+            while cur+1 in s: cur += 1; length += 1
+            best = max(best, length)
+    return best</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/tag/hash-table/" target="_blank">Hash Table Problems</a>
+    <a class="res-link" href="https://neetcode.io/roadmap" target="_blank">NeetCode Patterns</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="linked">
+  <div class="section-header">
+    <div class="section-icon">🔗</div>
+    <h2>Linked Lists</h2>
+    <span class="week-badge">Week 2</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Core Operations</h3>
+      <pre">### Reverse Linked List — O(n)
+def reverseList(head):
+    prev = None
+    curr = head
+    while curr:
+        nxt = curr.next
+        curr.next = prev
+        prev = curr
+        curr = nxt
+    return prev
+
+### Merge Two Sorted Lists
+def mergeTwoLists(l1, l2):
+    dummy = ListNode(0)
+    cur = dummy
+    while l1 and l2:
+        if l1.val <= l2.val:
+            cur.next = l1; l1 = l1.next
+        else:
+            cur.next = l2; l2 = l2.next
+        cur = cur.next
+    cur.next = l1 or l2
+    return dummy.next</pre>
+    </div>
+    <div class="card">
+      <h3>Fast & Slow Pointers</h3>
+      <pre">### Detect Cycle (Floyd's Algorithm)
+def hasCycle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast: return True
+    return False
+
+### Find Middle of Linked List
+def findMiddle(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow  # slow is at middle
+
+### Linked List Cycle II (find start of cycle)
+# After detection: reset slow to head
+# Move both one step at a time → meet at cycle start</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/tag/linked-list/" target="_blank">Linked List Problems</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="stacks">
+  <div class="section-header">
+    <div class="section-icon">📚</div>
+    <h2>Stacks & Queues</h2>
+    <span class="week-badge">Week 3</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Stack Patterns</h3>
+      <pre">### Valid Parentheses — O(n)
+def isValid(s):
+    stack = []
+    pairs = {')':'(', ']':'[', '}':'{'}
+    for c in s:
+        if c in '([{':
+            stack.append(c)
+        elif not stack or stack[-1] != pairs[c]:
+            return False
+        else:
+            stack.pop()
+    return not stack
+
+### Min Stack — O(1) getMin
+class MinStack:
+    def __init__(self):
+        self.stack = []; self.min_stack = []
+    def push(self, val):
+        self.stack.append(val)
+        mn = min(val, self.min_stack[-1] if self.min_stack else val)
+        self.min_stack.append(mn)
+    def pop(self):
+        self.stack.pop(); self.min_stack.pop()
+    def getMin(self): return self.min_stack[-1]</pre>
+    </div>
+    <div class="card">
+      <h3>Monotonic Stack</h3>
+      <pre">### Next Greater Element — O(n)
+def nextGreaterElement(nums):
+    result = [-1] * len(nums)
+    stack = []  # stores indices
+    for i, num in enumerate(nums):
+        while stack and nums[stack[-1]] < num:
+            idx = stack.pop()
+            result[idx] = num
+        stack.append(i)
+    return result
+
+### Daily Temperatures (same pattern)
+def dailyTemperatures(temps):
+    result = [0] * len(temps)
+    stack = []
+    for i, t in enumerate(temps):
+        while stack and temps[stack[-1]] < t:
+            j = stack.pop()
+            result[j] = i - j
+        stack.append(i)
+    return result</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/tag/stack/" target="_blank">Stack Problems</a>
+    <a class="res-link" href="https://leetcode.com/tag/monotonic-stack/" target="_blank">Monotonic Stack Tag</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="trees">
+  <div class="section-header">
+    <div class="section-icon">🌲</div>
+    <h2>Trees & Heaps</h2>
+    <span class="week-badge">Weeks 3, 5</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Tree Traversals</h3>
+      <pre">### Inorder (Left, Root, Right) — BST = sorted
+def inorder(root):
+    if not root: return []
+    return inorder(root.left) + [root.val] + inorder(root.right)
+
+### Preorder iterative
+def preorder(root):
+    if not root: return []
+    stack, result = [root], []
+    while stack:
+        node = stack.pop()
+        result.append(node.val)
+        if node.right: stack.append(node.right)
+        if node.left:  stack.append(node.left)
+    return result
+
+### Level Order (BFS)
+from collections import deque
+def levelOrder(root):
+    if not root: return []
+    queue = deque([root]); result = []
+    while queue:
+        level = []
+        for _ in range(len(queue)):
+            node = queue.popleft()
+            level.append(node.val)
+            if node.left:  queue.append(node.left)
+            if node.right: queue.append(node.right)
+        result.append(level)
+    return result</pre>
+    </div>
+    <div class="card">
+      <h3>Heap (Priority Queue)</h3>
+      <pre">import heapq
+
+### Min Heap (Python default)
+heap = [3, 1, 4, 1, 5]
+heapq.heapify(heap)          # O(n)
+heapq.heappush(heap, 2)      # O(log n)
+smallest = heapq.heappop(heap) # O(log n)
+
+### Max Heap: negate values
+max_heap = [-x for x in [3, 1, 4]]
+heapq.heapify(max_heap)
+largest = -heapq.heappop(max_heap)
+
+### Kth Largest Element — O(n log k)
+def findKthLargest(nums, k):
+    heap = nums[:k]
+    heapq.heapify(heap)      # min-heap of size k
+    for n in nums[k:]:
+        if n > heap[0]:
+            heapq.heapreplace(heap, n)
+    return heap[0]
+
+### Top K Frequent Elements
+def topKFrequent(nums, k):
+    count = Counter(nums)
+    return heapq.nlargest(k, count.keys(),
+                          key=count.get)</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/tag/tree/" target="_blank">Tree Problems</a>
+    <a class="res-link" href="https://leetcode.com/tag/heap-priority-queue/" target="_blank">Heap Problems</a>
+    <a class="res-link" href="https://visualgo.net/en/bst" target="_blank">BST Visual</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="graphs">
+  <div class="section-header">
+    <div class="section-icon">🕸️</div>
+    <h2>Graphs</h2>
+    <span class="week-badge">Week 4</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>DFS — All Patterns</h3>
+      <pre">### Recursive DFS template
+def dfs(node, visited, graph):
+    visited.add(node)
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            dfs(neighbor, visited, graph)
+
+### Number of Islands — O(m*n)
+def numIslands(grid):
+    def dfs(r, c):
+        if r<0 or r>=len(grid) or c<0 or c>=len(grid[0]):
+            return
+        if grid[r][c] != '1': return
+        grid[r][c] = '0'  # mark visited
+        for dr, dc in [(0,1),(0,-1),(1,0),(-1,0)]:
+            dfs(r+dr, c+dc)
+    count = 0
+    for r in range(len(grid)):
+        for c in range(len(grid[0])):
+            if grid[r][c] == '1':
+                dfs(r, c); count += 1
+    return count</pre>
+    </div>
+    <div class="card">
+      <h3>BFS + Topological Sort</h3>
+      <pre">from collections import deque
+
+### BFS template
+def bfs(start, graph):
+    queue = deque([start])
+    visited = {start}
+    while queue:
+        node = queue.popleft()
+        for nb in graph[node]:
+            if nb not in visited:
+                visited.add(nb)
+                queue.append(nb)
+
+### Course Schedule (Kahn's topo sort)
+def canFinish(n, prerequisites):
+    adj = defaultdict(list)
+    indegree = [0] * n
+    for a, b in prerequisites:
+        adj[b].append(a)
+        indegree[a] += 1
+    q = deque([i for i in range(n) if indegree[i]==0])
+    finished = 0
+    while q:
+        node = q.popleft(); finished += 1
+        for nb in adj[node]:
+            indegree[nb] -= 1
+            if indegree[nb] == 0: q.append(nb)
+    return finished == n</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/tag/graph/" target="_blank">Graph Problems</a>
+    <a class="res-link" href="https://visualgo.net/en/graphds" target="_blank">Visual Graph Algorithms</a>
+    <a class="res-link" href="https://neetcode.io/roadmap" target="_blank">NeetCode Graph</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="binary">
+  <div class="section-header">
+    <div class="section-icon">🔍</div>
+    <h2>Binary Search</h2>
+    <span class="week-badge">Week 5</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Standard + Variations</h3>
+      <pre">### Standard — O(log n)
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:   return mid
+        elif arr[mid] < target:  left = mid + 1
+        else:                    right = mid - 1
+    return -1
+
+### Search in Rotated Array
+def search(nums, target):
+    l, r = 0, len(nums) - 1
+    while l <= r:
+        mid = (l + r) // 2
+        if nums[mid] == target: return mid
+        if nums[l] <= nums[mid]:  # left half sorted
+            if nums[l] <= target < nums[mid]: r = mid - 1
+            else: l = mid + 1
+        else:                     # right half sorted
+            if nums[mid] < target <= nums[r]: l = mid + 1
+            else: r = mid - 1
+    return -1</pre>
+    </div>
+    <div class="card">
+      <h3>Binary Search on Answer</h3>
+      <pre">### Find Minimum in Rotated Sorted Array
+def findMin(nums):
+    left, right = 0, len(nums) - 1
+    while left < right:
+        mid = (left + right) // 2
+        if nums[mid] > nums[right]:
+            left = mid + 1  # min is in right half
+        else:
+            right = mid     # mid could be the min
+    return nums[left]
+
+### Key insight: binary search on ANSWER not array
+# "Minimum capacity such that X is possible"
+# Check feasibility(mid): if True → try smaller
+#                          if False → try larger
+# Template: left, right = min_val, max_val</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/tag/binary-search/" target="_blank">Binary Search Problems</a>
+    <a class="res-link" href="https://neetcode.io/roadmap" target="_blank">NeetCode Binary Search</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="dp">
+  <div class="section-header">
+    <div class="section-icon">🧮</div>
+    <h2>Dynamic Programming</h2>
+    <span class="week-badge">Weeks 6–7, 12</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>1D DP Patterns</h3>
+      <pre">### Climbing Stairs (Fibonacci)
+def climbStairs(n):
+    if n <= 2: return n
+    a, b = 1, 2
+    for _ in range(3, n + 1):
+        a, b = b, a + b
+    return b
+
+### House Robber (linear DP)
+def rob(nums):
+    prev2, prev1 = 0, 0
+    for n in nums:
+        prev2, prev1 = prev1, max(prev1, prev2 + n)
+    return prev1
+
+### Maximum Subarray (Kadane's)
+def maxSubArray(nums):
+    max_sum = cur = nums[0]
+    for n in nums[1:]:
+        cur = max(n, cur + n)
+        max_sum = max(max_sum, cur)
+    return max_sum</pre>
+    </div>
+    <div class="card">
+      <h3>2D DP + Knapsack</h3>
+      <pre">### Unique Paths
+def uniquePaths(m, n):
+    dp = [[1]*n for _ in range(m)]
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i-1][j] + dp[i][j-1]
+    return dp[m-1][n-1]
+
+### Coin Change (unbounded knapsack)
+def coinChange(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            dp[x] = min(dp[x], dp[x - coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+### Longest Increasing Subsequence — O(n log n)
+import bisect
+def lengthOfLIS(nums):
+    tails = []
+    for n in nums:
+        pos = bisect.bisect_left(tails, n)
+        if pos == len(tails): tails.append(n)
+        else: tails[pos] = n
+    return len(tails)</pre>
+    </div>
+    <div class="card">
+      <h3>DP Pattern Map</h3>
+      <table>
+        <tr><th>Pattern</th><th>Key Problems</th></tr>
+        <tr><td>Linear DP</td><td>Climbing Stairs, House Robber, Jump Game II</td></tr>
+        <tr><td>0/1 Knapsack</td><td>Subset Sum, Partition Equal Subset</td></tr>
+        <tr><td>Unbounded Knapsack</td><td>Coin Change, Perfect Squares</td></tr>
+        <tr><td>Sequence DP</td><td>LIS, LCS, Edit Distance</td></tr>
+        <tr><td>2D Grid DP</td><td>Unique Paths, Min Path Sum</td></tr>
+        <tr><td>Interval DP</td><td>Burst Balloons, Matrix Chain</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Edit Distance (Hard DP)</h3>
+      <pre">### Edit Distance — O(m*n)
+def minDistance(word1, word2):
+    m, n = len(word1), len(word2)
+    dp = [[0]*(n+1) for _ in range(m+1)]
+
+    for i in range(m+1): dp[i][0] = i  # delete all
+    for j in range(n+1): dp[0][j] = j  # insert all
+
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            if word1[i-1] == word2[j-1]:
+                dp[i][j] = dp[i-1][j-1]  # no op
+            else:
+                dp[i][j] = 1 + min(
+                    dp[i-1][j],    # delete
+                    dp[i][j-1],    # insert
+                    dp[i-1][j-1]   # replace
+                )
+    return dp[m][n]</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns" target="_blank">DP Patterns (LeetCode)</a>
+    <a class="res-link" href="https://neetcode.io/roadmap" target="_blank">NeetCode DP</a>
+    <a class="res-link" href="https://leetcode.com/tag/dynamic-programming/" target="_blank">DP Problems Tag</a>
+  </div>
+</section>
+
+<section class="section theme-dsa" id="backtrack">
+  <div class="section-header">
+    <div class="section-icon">↩️</div>
+    <h2>Backtracking & Greedy</h2>
+    <span class="week-badge">Weeks 7, 8</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Backtracking Template</h3>
+      <pre">### Subsets — O(2^n)
+def subsets(nums):
+    result = []
+    def backtrack(start, path):
+        result.append(path[:])
+        for i in range(start, len(nums)):
+            path.append(nums[i])
+            backtrack(i + 1, path)
+            path.pop()
+    backtrack(0, [])
+    return result
+
+### Combination Sum (with reuse)
+def combinationSum(candidates, target):
+    result = []
+    def backtrack(start, path, remaining):
+        if remaining == 0:
+            result.append(path[:]); return
+        for i in range(start, len(candidates)):
+            if candidates[i] <= remaining:
+                path.append(candidates[i])
+                backtrack(i, path, remaining - candidates[i])
+                path.pop()
+    backtrack(0, [], target)
+    return result</pre>
+    </div>
+    <div class="card">
+      <h3>Greedy Patterns</h3>
+      <pre">### Jump Game — O(n)
+def canJump(nums):
+    max_reach = 0
+    for i, jump in enumerate(nums):
+        if i > max_reach: return False
+        max_reach = max(max_reach, i + jump)
+    return True
+
+### Meeting Rooms II (min rooms needed)
+import heapq
+def minMeetingRooms(intervals):
+    intervals.sort(key=lambda x: x[0])
+    heap = []  # end times of active meetings
+    for start, end in intervals:
+        if heap and heap[0] <= start:
+            heapq.heapreplace(heap, end)
+        else:
+            heapq.heappush(heap, end)
+    return len(heap)
+
+### Best Time to Buy/Sell Stock (k=∞ transactions)
+def maxProfit(prices):
+    profit = 0
+    for i in range(1, len(prices)):
+        if prices[i] > prices[i-1]:
+            profit += prices[i] - prices[i-1]
+    return profit</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://leetcode.com/tag/backtracking/" target="_blank">Backtracking Problems</a>
+    <a class="res-link" href="https://leetcode.com/tag/greedy/" target="_blank">Greedy Problems</a>
+  </div>
+</section>
+
+<!-- ═══════════════ SYSTEM DESIGN ═══════════════ -->
+<section class="section theme-sys" id="sysdesign">
+  <div class="section-header">
+    <div class="section-icon">🏗️</div>
+    <h2>System Design Core Concepts</h2>
+    <span class="week-badge">Weeks 9–12, 15, 19</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Scalability Fundamentals</h3>
+      <table>
+        <tr><th>Concept</th><th>How</th><th>Trade-off</th></tr>
+        <tr><td>Vertical scaling</td><td>Bigger machine</td><td>Hardware ceiling, SPOF</td></tr>
+        <tr><td>Horizontal scaling</td><td>More machines</td><td>Complexity, consistency</td></tr>
+        <tr><td>CDN</td><td>Edge cache for static assets</td><td>Stale content risk</td></tr>
+        <tr><td>Sharding</td><td>Split DB by key range/hash</td><td>Cross-shard queries hard</td></tr>
+        <tr><td>Read replicas</td><td>Multiple read copies</td><td>Eventual consistency</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>CAP Theorem</h3>
+      <p>Distributed systems can guarantee only <strong>2 of 3</strong> simultaneously:</p>
+      <ul>
+        <li><strong>Consistency:</strong> All nodes return same data at same time</li>
+        <li><strong>Availability:</strong> Every request gets a non-error response</li>
+        <li><strong>Partition Tolerance:</strong> Works despite network failures between nodes</li>
+      </ul>
+      <div class="cheat">
+        Network partitions always happen → P is non-negotiable.<br>
+        <strong>CP:</strong> Bank systems — consistent over available.<br>
+        <strong>AP:</strong> Social feeds, DNS — available over consistent.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Caching Strategies</h3>
+      <table>
+        <tr><th>Strategy</th><th>Pattern</th><th>Use When</th></tr>
+        <tr><td>Cache-aside</td><td>App checks cache → miss → DB → write cache</td><td>Read-heavy, tolerate stale</td></tr>
+        <tr><td>Write-through</td><td>Write to cache + DB simultaneously</td><td>Write consistency needed</td></tr>
+        <tr><td>Write-behind</td><td>Write to cache, async DB update</td><td>High write throughput</td></tr>
+        <tr><td>Read-through</td><td>Cache handles DB reads automatically</td><td>Simplify app code</td></tr>
+      </table>
+      <p style="margin-top:8px">Eviction policies: <strong>LRU</strong> (most common), LFU, TTL-based.</p>
+    </div>
+    <div class="card">
+      <h3>SQL vs NoSQL Decision</h3>
+      <table>
+        <tr><th></th><th>SQL (PostgreSQL)</th><th>NoSQL</th></tr>
+        <tr><td>Schema</td><td>Rigid, enforced</td><td>Flexible</td></tr>
+        <tr><td>ACID</td><td>Full ACID</td><td>Usually BASE</td></tr>
+        <tr><td>Scaling</td><td>Vertical + read replicas</td><td>Horizontal</td></tr>
+        <tr><td>Queries</td><td>Complex JOINs fine</td><td>Simple key lookups best</td></tr>
+        <tr><td>Use for</td><td>Financial, relational data</td><td>User sessions, real-time</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Rate Limiting</h3>
+      <pre">### Token Bucket (most common)
+# Bucket holds N tokens, refills at R tokens/sec
+# Each request consumes 1 token
+# Reject if bucket empty
+
+### Sliding Window Counter (in Redis)
+key = f"rate_limit:{user_id}:{current_minute}"
+count = redis.incr(key)
+redis.expire(key, 60)
+
+if count > LIMIT:
+    return 429 Too Many Requests
+
+# Distributed: use Redis for shared state
+# Headers: X-RateLimit-Limit, X-RateLimit-Remaining</pre>
+    </div>
+    <div class="card">
+      <h3>Message Queues</h3>
+      <ul>
+        <li><strong>Why:</strong> Decouple services, handle traffic spikes, retry failures</li>
+        <li><strong>Pattern:</strong> Producer → Queue → Consumer</li>
+        <li><strong>Kafka:</strong> High throughput, replay, event streaming, partitions</li>
+        <tr><td><strong>RabbitMQ:</strong> Task queues, routing, RPC patterns</td></tr>
+        <li><strong>AWS SQS:</strong> Managed, simple, serverless-friendly</li>
+      </ul>
+      <div class="callout"><strong>Web3 use case:</strong> Index blockchain events asynchronously — webhook receives event → publish to queue → workers process + store to DB</div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://bytebytego.com/" target="_blank">ByteByteGo</a>
+    <a class="res-link" href="https://github.com/donnemartin/system-design-primer" target="_blank">System Design Primer (GitHub)</a>
+    <a class="res-link" href="https://www.youtube.com/@gkcs" target="_blank">Gaurav Sen (YouTube)</a>
+    <a class="res-link" href="https://www.interviewbit.com/system-design-interview-questions/" target="_blank">InterviewBit System Design</a>
+    <a class="res-link" href="https://redis.io/docs/" target="_blank">Redis Docs</a>
+  </div>
+</section>
+
+<section class="section theme-sys" id="sysdesign-patterns">
+  <div class="section-header">
+    <div class="section-icon">📐</div>
+    <h2>Common System Design Patterns</h2>
+    <span class="week-badge">Weeks 10, 12, 15</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>URL Shortener</h3>
+      <pre">// bit.ly, tinyURL
+Components:
+  - API: POST /shorten → returns short code
+  - DB: { short_code, original_url, user_id, created }
+  - Redirect: GET /{code} → 301/302 redirect
+
+Short Code Generation:
+  Option 1: Base62(auto-increment ID)  → sequential, predictable
+  Option 2: MD5(URL)[0:8]             → hash-based, possible collision
+  Option 3: Random + DB uniqueness check
+
+Scale:
+  - Read-heavy → cache popular URLs in Redis
+  - TTL on cache: most URLs accessed shortly after creation
+  - Analytics: async increment click counter via queue</pre>
+    </div>
+    <div class="card">
+      <h3>Twitter Feed / News Feed</h3>
+      <pre">// Fan-out strategies:
+Fan-out on write (push):
+  - On tweet: push to all followers' feed cache
+  - Pro: fast reads; Con: expensive for celebrities (10M+ followers)
+
+Fan-out on read (pull):
+  - On load: fetch tweets from all followed users
+  - Pro: simple writes; Con: slow reads
+
+Hybrid (Twitter's actual approach):
+  - Regular users → fan-out on write
+  - Celebrities → fan-out on read at query time
+  - Redis sorted sets for feed (score = timestamp)
+  - Pagination: cursor-based (not offset)</pre>
+    </div>
+    <div class="card">
+      <h3>Real-time Chat</h3>
+      <pre">// WhatsApp, Slack
+Key: persistent connections for real-time delivery
+
+Architecture:
+  WebSocket server (stateful, sticky sessions)
+  → Message broker (Kafka) for routing
+  → DB (Cassandra) for message history
+  → Push notifications for offline users
+
+Message delivery states:
+  Sent → Delivered → Read (WhatsApp ticks)
+
+Scale:
+  - Partition WebSocket servers by user ID
+  - Message deduplication with client-side UUID
+  - Offline delivery: push to queue, deliver on reconnect</pre>
+    </div>
+    <div class="card">
+      <h3>Distributed File Storage (S3-like)</h3>
+      <pre">// Dropbox, S3
+Components:
+  - Metadata service: { file_id, user_id, chunks[], size }
+  - Chunk servers: store fixed-size file chunks
+  - Load balancer: distributes uploads/downloads
+
+Upload flow:
+  1. Client splits file into 4MB chunks
+  2. For each chunk: hash → check if exists (dedup)
+  3. Upload only new chunks
+  4. Update metadata with chunk list
+
+Sync:
+  - Client watches local folder for changes
+  - Delta sync: only upload changed chunks
+  - Versioning: keep chunk history</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://bytebytego.com/" target="_blank">ByteByteGo (all designs)</a>
+    <a class="res-link" href="https://github.com/donnemartin/system-design-primer" target="_blank">System Design Primer</a>
+    <a class="res-link" href="https://www.youtube.com/watch?v=iJLL-KPqBpM" target="_blank">Designing URL Shortener (YT)</a>
+  </div>
+</section>
+
+<section class="section theme-sys" id="web3-design">
+  <div class="section-header">
+    <div class="section-icon">⛓️</div>
+    <h2>Web3 System Design</h2>
+    <span class="week-badge">Weeks 17–26 (interview prep)</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Design a DEX (Your Capstone)</h3>
+      <pre">On-chain (Solana Anchor program):
+  PoolState: { mint_a, mint_b, vault_a, vault_b, lp_mint, fee }
+  Instruction: swap(amount_in, min_amount_out, is_a_to_b)
+  - Calculate amount_out: x*y=k formula
+  - Deduct fee: amount_in * (10000 - fee_bps) / 10000
+  - CPI: transfer token_in → vault
+  - CPI: transfer token_out → user
+  - Update invariant k
+
+Off-chain (backend + frontend):
+  Indexer: Helius webhooks → PostgreSQL
+  API: GET /pool/{id}, GET /swap-quote
+  Frontend: React + Wallet Adapter
+  Real-time price: WebSocket to on-chain RPC</pre>
+    </div>
+    <div class="card">
+      <h3>Design a Multi-Chain Wallet App</h3>
+      <pre">Architecture:
+  Frontend: React / Next.js
+    - wagmi (Ethereum chains)
+    - @solana/wallet-adapter (Solana)
+    - Chain switcher component
+
+  Data layer:
+    - Alchemy SDK: ETH/Polygon/Arbitrum balances
+    - Helius: Solana token balances + NFTs
+    - CoinGecko API: USD prices
+    - React Query: caching + background refetch
+
+  Features:
+    - Multi-address tracking (read-only import)
+    - Portfolio chart (Recharts)
+    - Transaction history (Etherscan + Solscan APIs)
+    - Token swap (1inch for EVM, Jupiter for Solana)</pre>
+    </div>
+    <div class="card">
+      <h3>Design an NFT Marketplace</h3>
+      <pre">On-chain:
+  Listing PDA: { seller, mint, price, bump }
+  Vault: ATA owned by listing PDA
+  Instructions: list, buy, delist, update_price
+
+Off-chain indexer (Helius webhooks):
+  - Listen to program events
+  - Store in PostgreSQL: listings, sales, offers
+  - Update NFT metadata cache
+
+Frontend:
+  - Gallery: paginated grid with filters
+  - Detail: price history chart, traits rarity
+  - Buy flow: connect → approve → sign tx
+
+Royalties:
+  - Enforce via Metaplex pNFT (programmable NFT)
+  - Or handle in program: deduct % before SOL transfer</pre>
+    </div>
+    <div class="card">
+      <h3>Key Web3 Tradeoffs to Know</h3>
+      <table>
+        <tr><th>Decision</th><th>Option A</th><th>Option B</th></tr>
+        <tr><td>Data storage</td><td>On-chain (expensive, trustless)</td><td>IPFS/Arweave (cheap, semi-decentralised)</td></tr>
+        <tr><td>Indexing</td><td>Raw RPC polling (slow, self-managed)</td><td>The Graph / Helius (fast, trusted)</td></tr>
+        <tr><td>AMM type</td><td>V2 constant product (simple)</td><td>V3 concentrated liquidity (efficient)</td></tr>
+        <tr><td>Royalties</td><td>On-chain enforcement (pNFT)</td><td>Optional (regular NFT)</td></tr>
+        <tr><td>Wallet auth</td><td>Sign-in with Ethereum (SIWE)</td><td>Traditional JWT</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://github.com/orca-so/whirlpools" target="_blank">Orca DEX Source</a>
+    <a class="res-link" href="https://docs.helius.dev/" target="_blank">Helius Docs</a>
+    <a class="res-link" href="https://eips.ethereum.org/EIPS/eip-4361" target="_blank">Sign-In with Ethereum (EIP-4361)</a>
+    <a class="res-link" href="https://www.alchemy.com/blog/web3-system-design" target="_blank">Alchemy: Web3 System Design</a>
+  </div>
+</section>
+
+<!-- ═══════════════ WEB3 INTERVIEW ═══════════════ -->
+<section class="section theme-dsa" id="web3-interview">
+  <div class="section-header">
+    <div class="section-icon">🎯</div>
+    <h2>Web3 Interview Questions</h2>
+    <span class="week-badge">Months 5–6</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Blockchain / Ethereum Fundamentals</h3>
+      <ul>
+        <li>How does a transaction get signed and verified? Walk me through ECDSA.</li>
+        <li>What's the difference between a call and a transaction?</li>
+        <li>How does EIP-1559 work? What happens to the base fee?</li>
+        <li>What is a nonce and why does it prevent replay attacks?</li>
+        <li>Explain Merkle trees and how they're used in Ethereum.</li>
+        <li>What's the difference between EOA and contract account?</li>
+        <li>How does Ethereum finality work post-Merge?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Solidity / Smart Contract Security</h3>
+      <ul>
+        <li>Explain reentrancy. Show vulnerable code and the fix.</li>
+        <li>What's the checks-effects-interactions pattern?</li>
+        <li>What is tx.origin and why is it dangerous?</li>
+        <li>How do Merkle proofs work for NFT whitelists?</li>
+        <li>What's the difference between <code>transfer</code>, <code>send</code>, <code>call</code> for ETH sending?</li>
+        <li>Why is on-chain randomness hard? What's the Chainlink VRF solution?</li>
+        <li>What is a proxy pattern and why is it used?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Solana / Anchor</h3>
+      <ul>
+        <li>How is Solana's account model different from Ethereum's?</li>
+        <li>What is a PDA and why can't it have a private key?</li>
+        <li>How does a program sign for a PDA?</li>
+        <li>What is a CPI and when would you use it?</li>
+        <li>Explain the escrow pattern on Solana.</li>
+        <li>What is rent and how do you make an account rent-exempt?</li>
+        <li>How does Proof of History work?</li>
+        <li>What is Sealevel and how does it enable parallelism?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>DeFi / AMM Deep Dives</h3>
+      <ul>
+        <li>Explain x*y=k. How does it price a swap?</li>
+        <li>What is impermanent loss? Give a numerical example.</li>
+        <li>How does Uniswap V3 concentrated liquidity differ from V2?</li>
+        <li>What is a flash loan? How can it be used in an attack?</li>
+        <li>What is MEV? How do validators extract it?</li>
+        <li>What is slippage tolerance and how does a DEX frontend implement it?</li>
+        <li>How do LP tokens represent pool share?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Frontend / Full-Stack Web3</h3>
+      <ul>
+        <li>How does wagmi handle wallet connection across multiple chains?</li>
+        <li>What's the difference between ethers.js and viem?</li>
+        <li>How would you index historical on-chain events for a dashboard?</li>
+        <li>Explain how to implement gasless transactions (ERC-4337).</li>
+        <li>How do you handle transaction confirmation UI/UX? Pending, success, failed states.</li>
+        <li>What's the difference between IPFS CID and a traditional URL?</li>
+        <li>How would you build a real-time price ticker for a DEX?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Leverage Your Intel Background</h3>
+      <div class="callout">
+        <strong>Tell this story in interviews:</strong><br><br>
+        "At Intel I worked on system integration and validation for ChromeOS on Intel hardware. I understood how OS processes, memory models, and execution environments interact. When I studied Solana's Sealevel VM and account model, I immediately saw parallels to parallel process scheduling and memory isolation. That systems intuition is why I gravitate toward Solana — the engineering problems are more interesting than application-layer Ethereum work."
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://www.alchemy.com/blog/web3-interview-questions" target="_blank">Alchemy Interview Questions</a>
+    <a class="res-link" href="https://www.pramp.com/" target="_blank">Pramp (free mock interviews)</a>
+    <a class="res-link" href="https://interviewing.io/" target="_blank">Interviewing.io</a>
+    <a class="res-link" href="https://www.tryexponent.com/" target="_blank">Exponent (system design)</a>
+    <a class="res-link" href="https://www.levels.fyi/" target="_blank">Levels.fyi (salary benchmark)</a>
+  </div>
+</section>
+
+<!-- ═══════════════ CHEAT SHEETS ═══════════════ -->
+<section class="section theme-cheat" id="cheatsheet">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,209,102,.15)">⚡</div>
+    <h2>All Cheat Sheets</h2>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Ethereum Quick Ref</h3>
+      <div class="cheat">
+        <strong>Units:</strong> 1 ETH = 10^18 wei | 1 Gwei = 10^9 wei<br>
+        <strong>Fee:</strong> Gas Used × (Base Fee + Priority Fee)<br>
+        <strong>Hashing:</strong> Keccak-256 | <strong>Curve:</strong> secp256k1<br>
+        <strong>Sigs:</strong> ECDSA | <strong>Finality:</strong> ~13 min<br>
+        <strong>ETH transfer gas:</strong> 21,000<br>
+        <strong>ERC20 transfer gas:</strong> ~50,000
+      </div>
+    </div>
+    <div class="card">
+      <h3>Solana Quick Ref</h3>
+      <div class="cheat">
+        <strong>Units:</strong> 1 SOL = 10^9 lamports<br>
+        <strong>Block time:</strong> ~400ms | <strong>TPS:</strong> ~65,000<br>
+        <strong>Account:</strong> {lamports, data, owner, executable}<br>
+        <strong>PDA:</strong> find_program_address(seeds, program_id)<br>
+        <strong>Sigs:</strong> Ed25519 | <strong>Encoding:</strong> Base58<br>
+        <strong>Anchor space:</strong> 8 (discriminator) + field sizes
+      </div>
+    </div>
+    <div class="card">
+      <h3>DSA Complexities</h3>
+      <div class="cheat">
+        Two Pointers / Sliding Window: <strong>O(n)</strong><br>
+        HashMap lookup/insert/delete: <strong>O(1)</strong> avg<br>
+        Binary Search: <strong>O(log n)</strong><br>
+        BFS / DFS: <strong>O(V + E)</strong><br>
+        Heap push / pop: <strong>O(log n)</strong><br>
+        Sort: <strong>O(n log n)</strong><br>
+        DP (1D): <strong>O(n)</strong> time, <strong>O(1)</strong> space (optimised)<br>
+        DP (2D): <strong>O(m×n)</strong> time and space
+      </div>
+    </div>
+    <div class="card">
+      <h3>Pattern → Problem Mapping</h3>
+      <div class="cheat">
+        Sorted array + sum → <strong>Two pointers</strong><br>
+        Subarray / substring → <strong>Sliding window</strong><br>
+        Count / group / existence → <strong>HashMap</strong><br>
+        Find Kth / sort order → <strong>Heap</strong><br>
+        Generate all combos → <strong>Backtracking</strong><br>
+        Optimal substructure → <strong>DP</strong><br>
+        Connected components → <strong>DFS/BFS</strong><br>
+        Prerequisites / order → <strong>Topological sort</strong><br>
+        Sorted array search → <strong>Binary search</strong>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Anchor Cheat Sheet</h3>
+      <div class="cheat">
+        <strong>Account space:</strong> 8 + fields (use #[derive(InitSpace)])<br>
+        <strong>PDA sign:</strong> CpiContext::new_with_signer(..., &[&seeds])<br>
+        <strong>Token transfer CPI:</strong> anchor_spl::token::transfer<br>
+        <strong>Close account:</strong> #[account(close = receiver)]<br>
+        <strong>Constraints:</strong> init, mut, has_one, constraint, seeds+bump<br>
+        <strong>Errors:</strong> #[error_code] enum + require!() macro
+      </div>
+    </div>
+    <div class="card">
+      <h3>Web3 Interview Must-Knows</h3>
+      <div class="cheat">
+        ✅ How a tx is signed (ECDSA / Ed25519)<br>
+        ✅ What a PDA is and why no private key<br>
+        ✅ AMM pricing: x*y=k formula<br>
+        ✅ Impermanent loss (numerical example)<br>
+        ✅ Reentrancy attack + checks-effects-interactions fix<br>
+        ✅ Merkle tree whitelist pattern<br>
+        ✅ Solana account model vs Ethereum<br>
+        ✅ What a CPI is and when to use it<br>
+        ✅ EIP-1559 gas model (base fee burned)<br>
+        ✅ Flash loans and MEV (conceptual)
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.sidebar a[href^="#"]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.2, rootMargin: '-60px 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
