@@ -1,0 +1,3054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI / LLM Engineer — Theory Quick Reference</title>
+<style>
+  :root {
+    --bg:#0f1117; --surface:#1a1d2e; --surface2:#242740;
+    --accent:#6c63ff; --accent2:#00d4aa; --accent3:#ff6b6b;
+    --gold:#ffd166; --text:#e2e8f0; --muted:#8892a4;
+    --border:#2d3148; --code-bg:#0d1117;
+    --sidebar-w:232px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
+  ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--bg);} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+  .sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:100;}
+  .sidebar-title{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;padding:0 18px 12px;}
+  .sidebar a{display:block;padding:6px 18px;color:var(--muted);text-decoration:none;font-size:12.5px;transition:all .15s;border-left:3px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sidebar a:hover,.sidebar a.active{color:var(--text);background:var(--surface2);border-left-color:var(--accent);}
+  .sidebar .section-label{font-size:10px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;padding:14px 18px 4px;}
+
+  main{margin-left:var(--sidebar-w);width:calc(100vw - var(--sidebar-w));padding:40px 44px;}
+
+  .hero{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border);border-radius:12px;padding:36px 40px;margin-bottom:40px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-40px;right:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,170,.12) 0%,transparent 70%);}
+  .hero h1{font-size:26px;font-weight:800;margin-bottom:8px;}
+  .hero p{color:var(--muted);font-size:14px;}
+  .hero .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  .tag{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--muted);}
+
+  .section{margin-bottom:52px;}
+  .section-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .section-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .section-header h2{font-size:20px;font-weight:700;}
+  .week-badge{background:var(--accent);color:#fff;border-radius:4px;padding:3px 9px;font-size:11px;font-weight:700;margin-left:auto;white-space:nowrap;}
+
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s;}
+  .card:hover{border-color:var(--accent);}
+  .card h3{font-size:13.5px;font-weight:700;margin-bottom:10px;color:var(--accent2);}
+  .card p{font-size:13px;color:var(--muted);margin-bottom:8px;}
+  .card ul{padding-left:16px;}
+  .card li{font-size:13px;color:var(--muted);margin-bottom:5px;}
+  .card li strong{color:var(--text);}
+  .card a{color:var(--accent);text-decoration:none;font-size:12px;}
+  .card a:hover{text-decoration:underline;}
+  .card-wide{grid-column:span 2;}
+
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;font-size:12px;line-height:1.75;font-family:'Fira Code','Cascadia Code',Consolas,monospace;margin:10px 0;}
+  code{background:var(--code-bg);border-radius:4px;padding:2px 6px;font-size:12px;color:#79c0ff;font-family:'Fira Code',monospace;}
+
+  .res-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .res-link{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--accent);text-decoration:none;transition:all .15s;}
+  .res-link:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .res-link::before{content:'↗';font-size:10px;}
+
+  .cheat{background:var(--surface2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;margin:10px 0;font-size:13px;line-height:1.9;}
+  .cheat strong{color:var(--gold);}
+  .callout{background:rgba(0,212,170,.07);border:1px solid rgba(0,212,170,.2);border-radius:8px;padding:14px 18px;margin:12px 0;font-size:13px;}
+  .callout strong{color:var(--accent2);}
+  .warn{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);border-radius:8px;padding:14px 18px;margin:12px 0;font-size:13px;}
+  .warn strong{color:var(--accent3);}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0;}
+  th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);}
+  td{padding:8px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
+  tr:hover td{background:rgba(255,255,255,.02);}
+
+  .theme-llm .section-icon{background:rgba(0,212,170,.15);}
+  .theme-rag .section-icon{background:rgba(108,99,255,.15);}
+  .theme-agents .section-icon{background:rgba(56,189,248,.15);}
+  .theme-ft .section-icon{background:rgba(255,209,102,.15);}
+  .theme-dsa .section-icon{background:rgba(255,209,102,.15);}
+  .theme-sys .section-icon{background:rgba(56,189,248,.15);}
+  .theme-interview .section-icon{background:rgba(255,107,107,.15);}
+  .theme-career .section-icon{background:rgba(0,212,170,.15);}
+
+  @media(max-width:900px){.sidebar{display:none;}main{margin-left:0;width:100%;padding:20px;}.cards{grid-template-columns:1fr;}.card-wide{grid-column:span 1;}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-title">GenAI Reference</div>
+
+  <div class="section-label">LLM Foundations</div>
+  <a href="#transformers">🧠 Transformers & Attention</a>
+  <a href="#llm-apis">⚡ LLM APIs</a>
+  <a href="#prompt-eng">✍️ Prompt Engineering</a>
+  <a href="#embeddings">🔢 Embeddings</a>
+
+  <div class="section-label">RAG & Vector DBs</div>
+  <a href="#rag">📚 RAG Pipeline</a>
+  <a href="#vectordbs">🗄️ Vector Databases</a>
+  <a href="#langchain">⛓️ LangChain & LCEL</a>
+  <a href="#llamaindex">🦙 LlamaIndex</a>
+  <a href="#evals">📊 LLM Evaluation</a>
+
+  <div class="section-label">Agents</div>
+  <a href="#agents">🤖 Agent Patterns</a>
+  <a href="#langgraph">🕸️ LangGraph</a>
+  <a href="#multiagent">👥 Multi-Agent Systems</a>
+
+  <div class="section-label">Models & Fine-tuning</div>
+  <a href="#model-landscape">🗺️ Model Landscape</a>
+  <a href="#finetuning">🎛️ Fine-tuning: LoRA/QLoRA</a>
+  <a href="#local-llms">💻 Local LLMs</a>
+
+  <div class="section-label">Production</div>
+  <a href="#fastapi">🚀 FastAPI for AI</a>
+  <a href="#observability">🔭 Observability</a>
+  <a href="#cost">💰 Cost Optimization</a>
+
+  <div class="section-label">DSA (Parallel Track)</div>
+  <a href="#dsa-patterns">📐 Pattern Map</a>
+  <a href="#dsa-code">💻 Key Code Templates</a>
+
+  <div class="section-label">Project Guides</div>
+  <a href="#proj-chatbot">💬 P1: Multi-turn Chatbot</a>
+  <a href="#proj-rag">📚 P2: Document Q&A (RAG)</a>
+  <a href="#proj-agent">🤖 P3: Test Generator Agent</a>
+  <a href="#proj-capstone">🔴 P4: AI Coding Assistant</a>
+
+  <div class="section-label">Visibility Strategy</div>
+  <a href="#linkedin-strategy">💼 LinkedIn Playbook</a>
+  <a href="#oss-guide">🔧 OSS Contribution Guide</a>
+  <a href="#discord-hubs">💬 Discord Servers</a>
+  <a href="#hackathons">🏆 Hackathons</a>
+  <a href="#github-profile">📦 GitHub Profile</a>
+
+  <div class="section-label">Interview Prep</div>
+  <a href="#ai-interviews">🎯 AI Interview Questions</a>
+  <a href="#cheatsheet">⚡ All Cheat Sheets</a>
+</nav>
+
+<main>
+<div class="hero">
+  <h1>GenAI / LLM Engineer — Theory Quick Reference</h1>
+  <p>Every concept in your 6-month plan. Built for a builder, not a researcher — just enough depth to be dangerous in interviews, plus the code to ship.</p>
+  <div class="tags">
+    <span class="tag">Transformers</span><span class="tag">LLM APIs</span><span class="tag">RAG</span>
+    <span class="tag">LangChain</span><span class="tag">LangGraph</span><span class="tag">Agents</span>
+    <span class="tag">Fine-tuning</span><span class="tag">Evals</span><span class="tag">FastAPI</span>
+    <span class="tag">DSA</span><span class="tag">AI System Design</span>
+  </div>
+</div>
+
+<!-- ═══════════ TRANSFORMERS & ATTENTION ═══════════ -->
+<section class="section theme-llm" id="transformers">
+  <div class="section-header">
+    <div class="section-icon">🧠</div>
+    <h2>Transformers & Attention</h2>
+    <span class="week-badge">Week 1</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>The Attention Mechanism — Intuition</h3>
+      <p>Attention lets every token "look at" every other token when being encoded. It's what makes transformers understand context.</p>
+      <pre>Q = query  (what am I looking for?)
+K = key    (what do I contain?)
+V = value  (what do I actually contribute?)
+
+Attention(Q,K,V) = softmax(QK^T / √d_k) × V
+
+# √d_k = scaling to prevent vanishing gradients
+# softmax → weights sum to 1 (attention distribution)
+# "The cat sat on the mat" — when encoding "sat",
+# attention weight on "cat" is high (who sat?)</pre>
+      <p><strong>Multi-head:</strong> Run h attention heads in parallel, each learning different relationships (syntax, coreference, semantics). Concatenate results.</p>
+    </div>
+    <div class="card">
+      <h3>Transformer Architecture</h3>
+      <pre>Input Text
+    ↓ Tokenizer
+Token IDs [1, 9453, 281, ...]
+    ↓ Embedding layer
+Token Embeddings (d_model dimensions)
+    ↓ + Positional Encoding
+    ↓ N × Encoder/Decoder Blocks:
+       - Multi-Head Self-Attention
+       - Add & Norm (residual)
+       - Feed Forward (2 linear layers + ReLU)
+       - Add & Norm
+    ↓ Output layer (vocab size logits)
+    ↓ Softmax
+Next Token Probabilities</pre>
+      <ul>
+        <li><strong>Encoder-only:</strong> BERT — classification, embeddings</li>
+        <li><strong>Decoder-only:</strong> GPT, Llama, Claude — text generation</li>
+        <li><strong>Encoder-Decoder:</strong> T5, BART — translation, summarization</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Tokenization</h3>
+      <pre>## BPE (Byte Pair Encoding) — GPT models
+# Merges frequent character pairs iteratively
+"unhappiness" → ["un", "happ", "iness"]
+# ~100k vocab, subword level
+
+## SentencePiece — LLaMA, T5
+# Language-agnostic, handles any script
+
+## tiktoken — OpenAI's tokenizer
+import tiktoken
+enc = tiktoken.encoding_for_model("gpt-4o")
+tokens = enc.encode("Hello World")
+# [9906, 4435]  — 2 tokens
+
+# Rule of thumb: 1 token ≈ 0.75 words (English)
+# 1k tokens ≈ 750 words ≈ 1.5 pages
+# GPT-4o context: 128k tokens ≈ 100k words</pre>
+    </div>
+    <div class="card">
+      <h3>Context Window & Generation</h3>
+      <ul>
+        <li><strong>Context window:</strong> Max tokens the model can "see" at once (input + output)</li>
+        <li><strong>Temperature:</strong> 0 = deterministic, 1 = creative, >1 = chaotic</li>
+        <li><strong>Top-p (nucleus):</strong> Sample from top-p probability mass (0.9 = diverse)</li>
+        <li><strong>Top-k:</strong> Sample from top-k most likely tokens</li>
+        <li><strong>Max tokens:</strong> Hard cap on output length</li>
+        <li><strong>Stop sequences:</strong> Strings that halt generation early</li>
+      </ul>
+      <div class="callout"><strong>Interview tip:</strong> Know that KV-cache stores computed attention keys/values to avoid re-computing on each new token. This is why longer contexts are expensive.</div>
+    </div>
+    <div class="card">
+      <h3>Why LLMs Sometimes Fail — For Interviews</h3>
+      <table>
+        <tr><th>Problem</th><th>Root Cause</th><th>Mitigation</th></tr>
+        <tr><td>Hallucination</td><td>No grounding — generates plausible-sounding text</td><td>RAG, function calling, RLHF</td></tr>
+        <tr><td>Context forgetting</td><td>Attention diffuses over long contexts</td><td>Chunking, summarization, structured prompts</td></tr>
+        <tr><td>Inconsistency</td><td>Temperature sampling is stochastic</td><td>Temp=0, structured outputs</td></tr>
+        <tr><td>Prompt injection</td><td>User input overrides system prompt</td><td>Input sanitization, constrained outputs</td></tr>
+        <tr><td>Outdated knowledge</td><td>Knowledge cutoff date</td><td>RAG with recent data sources</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Model Sizes & VRAM Reference</h3>
+      <table>
+        <tr><th>Model Size</th><th>FP16 VRAM</th><th>4-bit VRAM</th><th>Runs on</th></tr>
+        <tr><td>7B params</td><td>~14 GB</td><td>~5 GB</td><td>RTX 3080, M2 Pro</td></tr>
+        <tr><td>13B params</td><td>~26 GB</td><td>~9 GB</td><td>RTX 3090, M2 Max</td></tr>
+        <tr><td>34B params</td><td>~68 GB</td><td>~22 GB</td><td>A100 40GB, M3 Ultra</td></tr>
+        <tr><td>70B params</td><td>~140 GB</td><td>~45 GB</td><td>Multi-GPU, A100 80GB</td></tr>
+        <tr><td>GPT-4 (est.)</td><td>Multi-TB</td><td>—</td><td>OpenAI infra</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://jalammar.github.io/illustrated-transformer/" target="_blank">The Illustrated Transformer</a>
+    <a class="res-link" href="https://arxiv.org/abs/1706.03762" target="_blank">Attention is All You Need</a>
+    <a class="res-link" href="https://huggingface.co/learn/nlp-course/en/chapter1/1" target="_blank">HuggingFace NLP Course</a>
+    <a class="res-link" href="https://www.youtube.com/watch?v=aircAruvnKk" target="_blank">3Blue1Brown: Neural Networks</a>
+    <a class="res-link" href="https://bbycroft.net/llm" target="_blank">LLM Visualization (interactive)</a>
+    <a class="res-link" href="https://tiktokenizer.vercel.app/" target="_blank">Tiktokenizer (interactive)</a>
+  </div>
+</section>
+
+<!-- ═══════════ LLM APIS ═══════════ -->
+<section class="section theme-llm" id="llm-apis">
+  <div class="section-header">
+    <div class="section-icon">⚡</div>
+    <h2>LLM APIs</h2>
+    <span class="week-badge">Weeks 1–2</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>OpenAI API Cheat Sheet</h3>
+      <pre>from openai import AsyncOpenAI
+client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+# Basic completion
+response = await client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user",   "content": "Explain RAG in one paragraph."}
+    ],
+    temperature=0.7,
+    max_tokens=500
+)
+text = response.choices[0].message.content
+
+# Streaming
+async with client.chat.completions.stream(
+    model="gpt-4o",
+    messages=[{"role":"user","content":"Tell me a story"}],
+) as stream:
+    async for chunk in stream:
+        print(chunk.choices[0].delta.content, end="", flush=True)</pre>
+    </div>
+    <div class="card">
+      <h3>Anthropic Claude API Cheat Sheet</h3>
+      <pre">import anthropic
+client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+
+# Basic
+message = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system="You are an expert code reviewer.",
+    messages=[{"role":"user","content":"Review this Python function: ..."}]
+)
+text = message.content[0].text
+
+# Streaming
+with client.messages.stream(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[{"role":"user","content":"Write a poem"}]
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+
+# Prompt caching (saves cost on large system prompts)
+client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system=[{"type":"text","text":large_context,
+             "cache_control":{"type":"ephemeral"}}],
+    messages=[...]
+)</pre>
+    </div>
+    <div class="card">
+      <h3>Structured Outputs (JSON mode)</h3>
+      <pre">from pydantic import BaseModel
+from openai import OpenAI
+
+client = OpenAI()
+
+class CodeReview(BaseModel):
+    issues: list[str]
+    severity: str   # "low" | "medium" | "high"
+    suggestions: list[str]
+    score: int      # 1-10
+
+# OpenAI structured outputs (guaranteed valid JSON)
+completion = client.beta.chat.completions.parse(
+    model="gpt-4o",
+    messages=[{"role":"user","content":f"Review: {code}"}],
+    response_format=CodeReview,
+)
+review = completion.choices[0].message.parsed
+print(review.score, review.issues)
+
+# Using instructor library (works with any provider)
+import instructor
+client = instructor.from_openai(OpenAI())
+review = client.chat.completions.create(
+    model="gpt-4o",
+    response_model=CodeReview,
+    messages=[{"role":"user","content":f"Review: {code}"}]
+)</pre>
+    </div>
+    <div class="card">
+      <h3>Tool / Function Calling</h3>
+      <pre">tools = [{
+    "type": "function",
+    "function": {
+        "name": "run_code",
+        "description": "Execute Python code and return output",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "code": {"type":"string","description":"Python code to run"},
+                "language": {"type":"string","enum":["python","javascript"]}
+            },
+            "required": ["code"]
+        }
+    }
+}]
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=messages,
+    tools=tools,
+    tool_choice="auto"
+)
+
+# Check if model wants to call a tool
+if response.choices[0].finish_reason == "tool_calls":
+    tool_call = response.choices[0].message.tool_calls[0]
+    fn_name = tool_call.function.name
+    args = json.loads(tool_call.function.arguments)
+    result = run_code(**args)  # Execute it
+    # Append result back to messages and call again</pre>
+    </div>
+    <div class="card">
+      <h3>Multi-Provider with LiteLLM</h3>
+      <pre">import litellm
+
+# Same interface for OpenAI, Anthropic, Gemini, Ollama
+response = litellm.completion(
+    model="gpt-4o",              # or "claude-sonnet-4-6"
+    messages=[{"role":"user","content":"Hello"}]  # or "gemini/gemini-pro"
+)
+
+# Fallback: try gpt-4o, fall back to claude on error
+response = litellm.completion(
+    model="gpt-4o",
+    messages=messages,
+    fallbacks=["claude-sonnet-4-6","gemini/gemini-pro"]
+)
+
+# Cost tracking built-in
+print(litellm.completion_cost(completion_response=response))
+# → 0.0023  (dollars)</pre>
+    </div>
+    <div class="card">
+      <h3>API Comparison Table</h3>
+      <table>
+        <tr><th>Model</th><th>Context</th><th>Best For</th><th>Cost (input/1M)</th></tr>
+        <tr><td>GPT-4o</td><td>128k</td><td>General, vision, tool use</td><td>$2.50</td></tr>
+        <tr><td>GPT-4o-mini</td><td>128k</td><td>Fast, cheap, high volume</td><td>$0.15</td></tr>
+        <tr><td>Claude Sonnet</td><td>200k</td><td>Long docs, coding, nuance</td><td>$3.00</td></tr>
+        <tr><td>Claude Haiku</td><td>200k</td><td>Speed + cost, production</td><td>$0.25</td></tr>
+        <tr><td>Gemini 1.5 Pro</td><td>1M(!)</td><td>Massive context, multimodal</td><td>$1.25</td></tr>
+        <tr><td>Llama 3.1 70B</td><td>128k</td><td>Open source, self-host</td><td>Free (self)</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://platform.openai.com/docs/overview" target="_blank">OpenAI API Docs</a>
+    <a class="res-link" href="https://docs.anthropic.com/en/api/getting-started" target="_blank">Anthropic API Docs</a>
+    <a class="res-link" href="https://ai.google.dev/gemini-api/docs" target="_blank">Gemini API Docs</a>
+    <a class="res-link" href="https://github.com/BerriAI/litellm" target="_blank">LiteLLM</a>
+    <a class="res-link" href="https://python.useinstructor.com/" target="_blank">Instructor (structured outputs)</a>
+    <a class="res-link" href="https://cookbook.openai.com/" target="_blank">OpenAI Cookbook</a>
+  </div>
+</section>
+
+<!-- ═══════════ PROMPT ENGINEERING ═══════════ -->
+<section class="section theme-llm" id="prompt-eng">
+  <div class="section-header">
+    <div class="section-icon">✍️</div>
+    <h2>Prompt Engineering</h2>
+    <span class="week-badge">Week 2</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Core Techniques</h3>
+      <table>
+        <tr><th>Technique</th><th>When to Use</th><th>Example</th></tr>
+        <tr><td>Zero-shot</td><td>Simple tasks, capable models</td><td>"Classify this text as positive/negative"</td></tr>
+        <tr><td>Few-shot</td><td>Consistent format needed</td><td>3-5 input→output examples in prompt</td></tr>
+        <tr><td>Chain-of-Thought</td><td>Math, reasoning, complex logic</td><td>"Think step by step..."</td></tr>
+        <tr><td>ReAct</td><td>Agents that need to reason + act</td><td>Thought → Action → Observation loop</td></tr>
+        <tr><td>Self-consistency</td><td>Improve accuracy on hard tasks</td><td>Sample multiple completions, vote</td></tr>
+        <tr><td>System prompt</td><td>Persona, format, constraints</td><td>Role + rules + output format</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>System Prompt Template</h3>
+      <pre">SYSTEM_PROMPT = """
+You are an expert {role} with {expertise}.
+
+## TASK
+{clear_task_description}
+
+## RULES
+- {rule_1}
+- {rule_2}
+- Never {prohibited_action}
+
+## OUTPUT FORMAT
+Respond ONLY with valid JSON matching this schema:
+{
+  "result": string,
+  "confidence": "high" | "medium" | "low",
+  "reasoning": string
+}
+
+## EXAMPLES
+User: {example_input}
+Assistant: {example_output}
+"""
+
+# Tips:
+# 1. Put most important instructions first AND last
+# 2. Use XML tags to separate sections: <context>, <task>
+# 3. Be explicit about output format — LLMs follow spec</pre>
+    </div>
+    <div class="card">
+      <h3>Chain-of-Thought Prompting</h3>
+      <pre">## Zero-shot CoT (just add this)
+"Let's think step by step."
+"Think through this carefully before answering."
+
+## Few-shot CoT example
+"""
+Q: I have 5 apples. I eat 2. I buy 3 more.
+   How many do I have?
+A: Start with 5 apples.
+   After eating 2: 5 - 2 = 3 apples.
+   After buying 3: 3 + 3 = 6 apples.
+   Answer: 6
+
+Q: {actual question}
+A:"""
+
+## For code review tasks:
+"Before giving your final assessment, first:
+ 1. List all functions and their purposes
+ 2. Identify potential edge cases
+ 3. Check for security issues
+ Then provide your structured review."</pre>
+    </div>
+    <div class="card">
+      <h3>XML Tags (Anthropic Best Practice)</h3>
+      <pre">## Claude responds better with XML structure
+messages = [{
+    "role": "user",
+    "content": """
+<context>
+{relevant_background_info}
+</context>
+
+<code>
+{code_to_review}
+</code>
+
+<task>
+Review the above code for:
+1. Correctness
+2. Performance issues
+3. Security vulnerabilities
+</task>
+
+<output_format>
+Return a JSON object with keys:
+issues (list), severity (string), score (1-10)
+</output_format>
+"""
+}]
+# XML tags help Claude parse structure reliably</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://www.promptingguide.ai/" target="_blank">Prompting Guide</a>
+    <a class="res-link" href="https://docs.anthropic.com/en/prompt-library/library" target="_blank">Anthropic Prompt Library</a>
+    <a class="res-link" href="https://platform.openai.com/docs/guides/prompt-engineering" target="_blank">OpenAI Prompt Guide</a>
+    <a class="res-link" href="https://learnprompting.org/docs/intro" target="_blank">Learn Prompting</a>
+  </div>
+</section>
+
+<!-- ═══════════ EMBEDDINGS ═══════════ -->
+<section class="section theme-llm" id="embeddings">
+  <div class="section-header">
+    <div class="section-icon">🔢</div>
+    <h2>Embeddings</h2>
+    <span class="week-badge">Weeks 4–5</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>What Are Embeddings?</h3>
+      <p>Dense vector representations of text. Semantically similar text → vectors that are close in high-dimensional space.</p>
+      <pre">from openai import OpenAI
+client = OpenAI()
+
+def embed(text: str) -> list[float]:
+    response = client.embeddings.create(
+        model="text-embedding-3-small",  # 1536 dims
+        input=text
+    )
+    return response.data[0].embedding
+
+# Cosine similarity = how similar two vectors are
+import numpy as np
+def cosine_sim(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+v1 = embed("Python programming")
+v2 = embed("coding in Python")
+v3 = embed("recipe for pasta")
+print(cosine_sim(v1, v2))  # ~0.95 (very similar)
+print(cosine_sim(v1, v3))  # ~0.3  (dissimilar)</pre>
+    </div>
+    <div class="card">
+      <h3>Embedding Models Comparison</h3>
+      <table>
+        <tr><th>Model</th><th>Dims</th><th>Best For</th><th>Cost</th></tr>
+        <tr><td>text-embedding-3-small</td><td>1536</td><td>General retrieval, RAG</td><td>$0.02/1M tokens</td></tr>
+        <tr><td>text-embedding-3-large</td><td>3072</td><td>High accuracy tasks</td><td>$0.13/1M tokens</td></tr>
+        <tr><td>sentence-transformers/all-MiniLM</td><td>384</td><td>Local, fast, free</td><td>Free</td></tr>
+        <tr><td>voyage-code-2 (Voyage AI)</td><td>1536</td><td>Code retrieval (your capstone)</td><td>$0.12/1M</td></tr>
+        <tr><td>BAAI/bge-m3</td><td>1024</td><td>Multilingual, HuggingFace</td><td>Free</td></tr>
+      </table>
+      <div class="callout"><strong>For your coding assistant:</strong> Use voyage-code-2 or CodeBERT — trained on code, not general text. Makes a measurable difference in retrieval quality.</div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://platform.openai.com/docs/guides/embeddings" target="_blank">OpenAI Embeddings Guide</a>
+    <a class="res-link" href="https://www.sbert.net/" target="_blank">sentence-transformers</a>
+    <a class="res-link" href="https://docs.voyageai.com/docs/embeddings" target="_blank">Voyage AI Code Embeddings</a>
+    <a class="res-link" href="https://weaviate.io/blog/vector-embeddings-explained" target="_blank">Embeddings Explained (Weaviate)</a>
+  </div>
+</section>
+
+<!-- ═══════════ RAG PIPELINE ═══════════ -->
+<section class="section theme-rag" id="rag">
+  <div class="section-header">
+    <div class="section-icon">📚</div>
+    <h2>RAG Pipeline</h2>
+    <span class="week-badge">Weeks 5–8</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>RAG Architecture</h3>
+      <pre">Ingestion (offline):
+  Documents → Chunking → Embedding → Vector Store
+
+Query (online):
+  User question
+      ↓ Embed query
+      ↓ Similarity search in vector store
+  Top-k relevant chunks
+      ↓ Combine: chunks + question → prompt
+      ↓ LLM generates answer
+  Response with citations
+
+# Basic RAG from scratch
+def rag_query(question: str, vectorstore, llm):
+    # 1. Retrieve
+    docs = vectorstore.similarity_search(question, k=4)
+    context = "\n\n".join([d.page_content for d in docs])
+
+    # 2. Augment
+    prompt = f"""Answer based ONLY on this context:
+    {context}
+
+    Question: {question}
+    Answer:"""
+
+    # 3. Generate
+    return llm.invoke(prompt)</pre>
+    </div>
+    <div class="card">
+      <h3>Chunking Strategies</h3>
+      <pre">from langchain_text_splitters import (
+    RecursiveCharacterTextSplitter,
+    MarkdownHeaderTextSplitter
+)
+
+# Fixed-size (baseline, use first)
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200,  # overlap = context continuity
+    separators=["\n\n", "\n", ".", " "]
+)
+chunks = splitter.split_text(document)
+
+# Semantic chunking (better, slower)
+from langchain_experimental.text_splitter import SemanticChunker
+from langchain_openai import OpenAIEmbeddings
+splitter = SemanticChunker(OpenAIEmbeddings())
+
+# For code (your capstone): split by function/class
+# tree-sitter: extract functions as individual chunks
+# Don't chunk mid-function — loss of context!</pre>
+    </div>
+    <div class="card">
+      <h3>Advanced RAG Techniques</h3>
+      <table>
+        <tr><th>Technique</th><th>What it does</th><th>When to use</th></tr>
+        <tr><td>HyDE</td><td>Generate hypothetical answer, embed that for retrieval</td><td>When query is vague/abstract</td></tr>
+        <tr><td>Hybrid Search</td><td>BM25 keyword + vector semantic, fuse results</td><td>Mixed keyword+semantic queries</td></tr>
+        <tr><td>Reranking</td><td>Cross-encoder re-scores top-k candidates</td><td>Quality > speed tradeoff</td></tr>
+        <tr><td>Parent-Child</td><td>Store large chunks, retrieve small ones</td><td>Need broader context after retrieval</td></tr>
+        <tr><td>RAPTOR</td><td>Recursive summarisation tree for hierarchical retrieval</td><td>Large document collections</td></tr>
+        <tr><td>Multi-query</td><td>Generate 3 query variants, union results</td><td>Ambiguous user questions</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>HyDE — Hypothetical Document Embeddings</h3>
+      <pre">def hyde_retrieval(question: str, vectorstore, llm):
+    # Step 1: Generate a hypothetical answer
+    hypothetical = llm.invoke(
+        f"Write a short passage that would answer: {question}"
+    )
+
+    # Step 2: Embed the hypothetical answer (not the question!)
+    embedding = embed(hypothetical)
+
+    # Step 3: Search with that embedding
+    docs = vectorstore.similarity_search_by_vector(embedding, k=4)
+    return docs
+
+# Why it works: hypothetical answer is in the same
+# semantic space as real documents, even if factually wrong
+# → better retrieval for abstract queries</pre>
+    </div>
+    <div class="card">
+      <h3>Hybrid Search Implementation</h3>
+      <pre">from langchain_community.retrievers import BM25Retriever
+from langchain.retrievers import EnsembleRetriever
+
+# BM25: classic keyword search (TF-IDF variant)
+bm25_retriever = BM25Retriever.from_documents(docs)
+bm25_retriever.k = 4
+
+# Vector: semantic search
+vector_retriever = vectorstore.as_retriever(search_kwargs={"k":4})
+
+# Ensemble: combine both
+ensemble = EnsembleRetriever(
+    retrievers=[bm25_retriever, vector_retriever],
+    weights=[0.4, 0.6]  # more weight to semantic
+)
+
+results = ensemble.invoke("your query here")
+# Then optionally rerank with Cohere</pre>
+    </div>
+    <div class="card">
+      <h3>Reranking with Cohere</h3>
+      <pre">import cohere
+co = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
+
+def rerank(query: str, documents: list[str], top_n=3):
+    response = co.rerank(
+        model="rerank-english-v3.0",
+        query=query,
+        documents=documents,
+        top_n=top_n,
+    )
+    return [documents[r.index] for r in response.results]
+
+# Pipeline: retrieve k=20, rerank to top 3
+# Much cheaper than embedding 20 docs every time
+# Cross-encoder (reranker) > bi-encoder (embedding)
+# for final scoring — but too slow for first-stage</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://arxiv.org/abs/2312.10997" target="_blank">RAG Survey Paper</a>
+    <a class="res-link" href="https://python.langchain.com/docs/tutorials/rag/" target="_blank">LangChain RAG Tutorial</a>
+    <a class="res-link" href="https://www.pinecone.io/learn/chunking-strategies/" target="_blank">Chunking Strategies</a>
+    <a class="res-link" href="https://docs.cohere.com/docs/reranking" target="_blank">Cohere Reranking</a>
+    <a class="res-link" href="https://towardsdatascience.com/advanced-rag-techniques-an-illustrated-overview-04d193d8fec6" target="_blank">Advanced RAG Overview (ToDS)</a>
+  </div>
+</section>
+
+<!-- ═══════════ VECTOR DATABASES ═══════════ -->
+<section class="section theme-rag" id="vectordbs">
+  <div class="section-header">
+    <div class="section-icon">🗄️</div>
+    <h2>Vector Databases</h2>
+    <span class="week-badge">Week 5</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Chroma (Local — Start Here)</h3>
+      <pre">import chromadb
+from langchain_chroma import Chroma
+from langchain_openai import OpenAIEmbeddings
+
+# Create/load collection
+vectorstore = Chroma(
+    collection_name="my_docs",
+    embedding_function=OpenAIEmbeddings(),
+    persist_directory="./chroma_db"  # persists to disk
+)
+
+# Add documents
+vectorstore.add_texts(
+    texts=["chunk 1 text", "chunk 2 text"],
+    metadatas=[{"source":"doc1.pdf"},{"source":"doc1.pdf"}]
+)
+
+# Search
+results = vectorstore.similarity_search(
+    query="your question",
+    k=4,
+    filter={"source": "doc1.pdf"}  # metadata filter
+)
+
+# With scores
+results = vectorstore.similarity_search_with_score("query", k=4)
+# returns: [(Document, 0.23), (Document, 0.45), ...]</pre>
+    </div>
+    <div class="card">
+      <h3>Pinecone (Cloud — Production)</h3>
+      <pre">from pinecone import Pinecone, ServerlessSpec
+
+pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
+
+# Create index
+pc.create_index(
+    name="my-index",
+    dimension=1536,     # match your embedding model
+    metric="cosine",
+    spec=ServerlessSpec(cloud="aws", region="us-east-1")
+)
+index = pc.Index("my-index")
+
+# Upsert vectors
+index.upsert(vectors=[
+    {"id":"doc1-chunk0", "values":[...], "metadata":{"text":"..."}}
+])
+
+# Query
+results = index.query(
+    vector=embed("your question"),
+    top_k=5,
+    include_metadata=True,
+    filter={"category": {"$eq": "python"}}  # metadata filter
+)</pre>
+    </div>
+    <div class="card">
+      <h3>Vector DB Comparison</h3>
+      <table>
+        <tr><th>DB</th><th>Best For</th><th>Hosting</th><th>Free Tier</th></tr>
+        <tr><td>Chroma</td><td>Local dev, prototyping</td><td>In-process / self-host</td><td>∞ (open source)</td></tr>
+        <tr><td>Pinecone</td><td>Production, managed</td><td>Cloud (serverless)</td><td>100k vectors</td></tr>
+        <tr><td>Weaviate</td><td>Hybrid search built-in</td><td>Cloud + self-host</td><td>14-day trial</td></tr>
+        <tr><td>Qdrant</td><td>High performance, Rust-based</td><td>Cloud + self-host</td><td>1GB cloud</td></tr>
+        <tr><td>pgvector</td><td>Already using PostgreSQL</td><td>Self-host (Postgres ext)</td><td>Free (self-host)</td></tr>
+      </table>
+      <div class="callout"><strong>Recommendation:</strong> Chroma locally → Pinecone for deployed projects. Both have LangChain integrations that swap out cleanly.</div>
+    </div>
+    <div class="card">
+      <h3>ANN Search Algorithms</h3>
+      <ul>
+        <li><strong>HNSW (Hierarchical NSW):</strong> Graph-based. Fast, accurate. Default in most vector DBs. O(log n) query.</li>
+        <li><strong>IVF (Inverted File):</strong> Cluster-based. Good for huge datasets (>1M vectors). Used by Faiss.</li>
+        <li><strong>Flat (brute force):</strong> Exact search. Perfect accuracy, O(n). Only viable for small datasets.</li>
+        <li><strong>Product Quantization:</strong> Compress vectors to reduce memory. Trades accuracy for speed.</li>
+      </ul>
+      <p style="margin-top:8px">For interviews: know that vector DBs use <strong>Approximate Nearest Neighbor</strong> search — trading tiny accuracy loss for massive speed gains at scale.</p>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.trychroma.com/" target="_blank">Chroma Docs</a>
+    <a class="res-link" href="https://docs.pinecone.io/" target="_blank">Pinecone Docs</a>
+    <a class="res-link" href="https://weaviate.io/developers/weaviate" target="_blank">Weaviate Docs</a>
+    <a class="res-link" href="https://qdrant.tech/documentation/" target="_blank">Qdrant Docs</a>
+    <a class="res-link" href="https://github.com/pgvector/pgvector" target="_blank">pgvector (PostgreSQL)</a>
+  </div>
+</section>
+
+<!-- ═══════════ LANGCHAIN ═══════════ -->
+<section class="section theme-rag" id="langchain">
+  <div class="section-header">
+    <div class="section-icon">⛓️</div>
+    <h2>LangChain & LCEL</h2>
+    <span class="week-badge">Weeks 6–7</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>LCEL — LangChain Expression Language</h3>
+      <pre">from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+llm = ChatOpenAI(model="gpt-4o", temperature=0)
+prompt = ChatPromptTemplate.from_template(
+    "Answer this question: {question}"
+)
+parser = StrOutputParser()
+
+# Chain with | pipe operator
+chain = prompt | llm | parser
+
+# Invoke
+result = chain.invoke({"question": "What is RAG?"})
+
+# Streaming
+for chunk in chain.stream({"question": "Tell me a story"}):
+    print(chunk, end="", flush=True)
+
+# Batch
+results = chain.batch([
+    {"question": "Q1"}, {"question": "Q2"}
+])</pre>
+    </div>
+    <div class="card">
+      <h3>Full RAG Chain (LCEL)</h3>
+      <pre">from langchain_core.runnables import RunnablePassthrough
+from langchain_chroma import Chroma
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+
+vectorstore = Chroma(embedding_function=OpenAIEmbeddings())
+retriever = vectorstore.as_retriever(search_kwargs={"k":4})
+
+prompt = ChatPromptTemplate.from_template("""
+Answer based ONLY on the following context:
+{context}
+
+Question: {question}
+""")
+
+def format_docs(docs):
+    return "\n\n".join(d.page_content for d in docs)
+
+rag_chain = (
+    {"context": retriever | format_docs,
+     "question": RunnablePassthrough()}
+    | prompt
+    | ChatOpenAI(model="gpt-4o")
+    | StrOutputParser()
+)
+
+answer = rag_chain.invoke("What is the refund policy?")</pre>
+    </div>
+    <div class="card">
+      <h3>Memory — Conversation History</h3>
+      <pre">from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
+store = {}  # {session_id: ChatMessageHistory}
+
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+    return store[session_id]
+
+chain_with_history = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="question",
+    history_messages_key="history"
+)
+
+# Call with session_id
+response = chain_with_history.invoke(
+    {"question": "What did I ask before?"},
+    config={"configurable": {"session_id": "user123"}}
+)</pre>
+    </div>
+    <div class="card">
+      <h3>LangSmith Observability</h3>
+      <pre">## Enable LangSmith (just set env vars)
+import os
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = "ls_..."
+os.environ["LANGCHAIN_PROJECT"] = "my-rag-app"
+
+# Now every chain invocation is traced automatically
+# View at: smith.langchain.com
+# See: inputs, outputs, latency, token costs, errors
+
+## Manual feedback logging
+from langsmith import Client
+client = Client()
+client.create_feedback(
+    run_id=run.id,
+    key="user-rating",
+    score=1.0,   # thumbs up
+    comment="Great answer!"
+)</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://python.langchain.com/docs/introduction/" target="_blank">LangChain Python Docs</a>
+    <a class="res-link" href="https://python.langchain.com/docs/concepts/lcel/" target="_blank">LCEL Guide</a>
+    <a class="res-link" href="https://docs.smith.langchain.com/" target="_blank">LangSmith Docs</a>
+  </div>
+</section>
+
+<!-- ═══════════ LLAMAINDEX ═══════════ -->
+<section class="section theme-rag" id="llamaindex">
+  <div class="section-header">
+    <div class="section-icon">🦙</div>
+    <h2>LlamaIndex</h2>
+    <span class="week-badge">Week 9</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Core Concepts</h3>
+      <pre">from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core import Settings
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+Settings.llm = OpenAI(model="gpt-4o")
+Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+
+# Load + index documents
+documents = SimpleDirectoryReader("./docs/").load_data()
+index = VectorStoreIndex.from_documents(documents)
+
+# Query
+query_engine = index.as_query_engine(similarity_top_k=4)
+response = query_engine.query("What is the refund policy?")
+print(response.response)
+print(response.source_nodes)  # retrieved docs with scores</pre>
+    </div>
+    <div class="card">
+      <h3>LangChain vs LlamaIndex</h3>
+      <table>
+        <tr><th></th><th>LangChain</th><th>LlamaIndex</th></tr>
+        <tr><td>Strength</td><td>Agents, chains, general orchestration</td><td>RAG, document indexing, data querying</td></tr>
+        <tr><td>Learning curve</td><td>Higher (more abstractions)</td><td>Lower for RAG specifically</td></tr>
+        <tr><td>Connectors</td><td>100s of tool integrations</td><td>80+ data loaders (PDF, Notion, DB)</td></tr>
+        <tr><td>Best for</td><td>Multi-step agents, production pipelines</td><td>Document Q&A, knowledge bases</td></tr>
+        <tr><td>Use together?</td><td colspan="2">Yes — LlamaIndex for indexing, LangChain for orchestration</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.llamaindex.ai/en/stable/" target="_blank">LlamaIndex Docs</a>
+    <a class="res-link" href="https://docs.llamaindex.ai/en/stable/getting_started/starter_example/" target="_blank">LlamaIndex Starter Tutorial</a>
+  </div>
+</section>
+
+<!-- ═══════════ LLM EVALS ═══════════ -->
+<section class="section theme-rag" id="evals">
+  <div class="section-header">
+    <div class="section-icon">📊</div>
+    <h2>LLM Evaluation — Your Intel Advantage</h2>
+    <span class="week-badge">Weeks 7, 15</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>RAGAS — RAG Evaluation Framework</h3>
+      <pre">from ragas import evaluate
+from ragas.metrics import (
+    faithfulness,        # Does answer match context?
+    answer_relevancy,   # Is answer relevant to question?
+    context_recall,     # Is all needed info in context?
+    context_precision,  # Is retrieved context relevant?
+)
+
+# Prepare eval dataset
+from datasets import Dataset
+eval_data = Dataset.from_dict({
+    "question": ["What is the return policy?"],
+    "answer": ["You can return within 30 days."],
+    "contexts": [["Our policy allows returns within 30 days..."]],
+    "ground_truth": ["Returns are accepted within 30 days."]
+})
+
+results = evaluate(eval_data, metrics=[
+    faithfulness, answer_relevancy,
+    context_recall, context_precision
+])
+print(results)  # scores 0-1 for each metric</pre>
+    </div>
+    <div class="card">
+      <h3>Eval Metrics Reference</h3>
+      <table>
+        <tr><th>Metric</th><th>What it measures</th><th>Catches</th></tr>
+        <tr><td>Faithfulness</td><td>Answer grounded in retrieved context</td><td>Hallucination</td></tr>
+        <tr><td>Answer Relevancy</td><td>Answer addresses the question</td><td>Irrelevant outputs</td></tr>
+        <tr><td>Context Recall</td><td>Relevant info actually retrieved</td><td>Bad retrieval</td></tr>
+        <tr><td>Context Precision</td><td>Retrieved context is on-topic</td><td>Noisy retrieval</td></tr>
+        <tr><td>Latency</td><td>End-to-end response time</td><td>Production viability</td></tr>
+        <tr><td>Cost/query</td><td>Token usage × price</td><td>Budget overruns</td></tr>
+      </table>
+      <div class="callout"><strong>Your Intel edge:</strong> You built automated test pipelines for hardware validation. LLM eval is the same discipline — define expected behaviour, measure deviation, automate the feedback loop. This is a rare skill in AI engineering.</div>
+    </div>
+    <div class="card">
+      <h3>Promptfoo — Test-Driven Prompts</h3>
+      <pre"># promptfooconfig.yaml
+prompts:
+  - "Answer this question: {{question}}"
+  - "You are an expert assistant. Answer: {{question}}"
+
+providers:
+  - openai:gpt-4o
+  - anthropic:claude-sonnet-4-6
+
+tests:
+  - vars:
+      question: "What is the capital of France?"
+    assert:
+      - type: contains
+        value: "Paris"
+      - type: cost
+        threshold: 0.01  # max $0.01 per call
+
+# Run: npx promptfoo@latest eval
+# Compares prompt variants + models in a table
+# Automated regressions when you change prompts</pre>
+    </div>
+    <div class="card">
+      <h3>Build Your Own Eval Harness</h3>
+      <pre">import json
+from tqdm import tqdm
+
+def evaluate_coding_assistant(test_cases: list[dict]) -> dict:
+    """
+    test_cases: [{"input": code, "expected_issues": [...]}]
+    """
+    results = []
+    for case in tqdm(test_cases):
+        output = coding_assistant.review(case["input"])
+
+        # Check: did we catch the expected issues?
+        caught = [issue for issue in case["expected_issues"]
+                  if issue.lower() in output.lower()]
+        precision = len(caught) / max(len(output_issues), 1)
+        recall = len(caught) / len(case["expected_issues"])
+
+        results.append({
+            "precision": precision,
+            "recall": recall,
+            "latency_ms": measure_latency()
+        })
+
+    return {
+        "avg_precision": sum(r["precision"] for r in results)/len(results),
+        "avg_recall": sum(r["recall"] for r in results)/len(results),
+        "avg_latency": sum(r["latency_ms"] for r in results)/len(results)
+    }</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.ragas.io/en/stable/" target="_blank">RAGAS Docs</a>
+    <a class="res-link" href="https://promptfoo.dev/docs/intro" target="_blank">Promptfoo Docs</a>
+    <a class="res-link" href="https://docs.smith.langchain.com/evaluation" target="_blank">LangSmith Evals</a>
+    <a class="res-link" href="https://github.com/EleutherAI/lm-evaluation-harness" target="_blank">Eleuther LM Eval Harness</a>
+  </div>
+</section>
+
+<!-- ═══════════ AGENTS ═══════════ -->
+<section class="section theme-agents" id="agents">
+  <div class="section-header">
+    <div class="section-icon">🤖</div>
+    <h2>Agent Patterns</h2>
+    <span class="week-badge">Weeks 11–13</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>ReAct Pattern</h3>
+      <pre">## ReAct: Reasoning + Acting loop
+# Thought → Action → Observation → Thought → ...
+
+from langchain.agents import create_react_agent, AgentExecutor
+from langchain_community.tools import TavilySearchResults
+from langchain_openai import ChatOpenAI
+
+tools = [TavilySearchResults(max_results=3)]
+llm = ChatOpenAI(model="gpt-4o", temperature=0)
+
+# ReAct prompt instructs model to output:
+# Thought: ...
+# Action: tool_name
+# Action Input: {...}
+# Observation: (tool result inserted here)
+# ... repeat ...
+# Final Answer: ...
+
+agent = create_react_agent(llm, tools, prompt)
+executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+result = executor.invoke({"input": "What is the latest news on LLMs?"})</pre>
+    </div>
+    <div class="card">
+      <h3>Custom Tool Definition</h3>
+      <pre">from langchain_core.tools import tool
+
+@tool
+def run_python_code(code: str) -> str:
+    """Execute Python code and return the output.
+    Use for calculations, data processing, or testing."""
+    import subprocess, sys
+    result = subprocess.run(
+        [sys.executable, "-c", code],
+        capture_output=True, text=True, timeout=10
+    )
+    return result.stdout or result.stderr
+
+@tool
+def search_codebase(query: str, top_k: int = 3) -> str:
+    """Search the indexed codebase for relevant functions/classes."""
+    results = codebase_vectorstore.similarity_search(query, k=top_k)
+    return "\n\n".join([r.page_content for r in results])
+
+# Register tools with agent
+tools = [run_python_code, search_codebase]</pre>
+    </div>
+    <div class="card">
+      <h3>Agent Failure Modes</h3>
+      <table>
+        <tr><th>Problem</th><th>Cause</th><th>Fix</th></tr>
+        <tr><td>Infinite loops</td><td>Agent keeps trying failed actions</td><td>max_iterations limit + stop condition</td></tr>
+        <tr><td>Wrong tool choice</td><td>Poor tool descriptions</td><td>Clear, specific docstrings on tools</td></tr>
+        <tr><td>Hallucinated tool calls</td><td>Tool doesn't exist / wrong args</td><td>Pydantic validation on tool inputs</td></tr>
+        <tr><td>Context overflow</td><td>Too many observations fill context</td><td>Summarise observation history</td></tr>
+        <tr><td>Irreversible actions</td><td>Agent deletes/modifies without confirm</td><td>Human-in-the-loop checkpoints</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>When to Use Agents vs Chains</h3>
+      <div class="cheat">
+        <strong>Use a Chain when:</strong><br>
+        • The steps are fixed and predictable<br>
+        • Speed matters (less LLM calls = faster)<br>
+        • You can enumerate all paths in advance<br><br>
+        <strong>Use an Agent when:</strong><br>
+        • The number of steps is unknown<br>
+        • You need dynamic tool selection<br>
+        • The task requires reasoning about what to do next<br><br>
+        <em>Rule: Start with chains. Only add agents when the task genuinely requires dynamic decision-making.</em>
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://python.langchain.com/docs/concepts/agents/" target="_blank">LangChain Agents Docs</a>
+    <a class="res-link" href="https://arxiv.org/abs/2210.03629" target="_blank">ReAct Paper</a>
+    <a class="res-link" href="https://docs.tavily.com/welcome" target="_blank">Tavily Search Tool</a>
+  </div>
+</section>
+
+<!-- ═══════════ LANGGRAPH ═══════════ -->
+<section class="section theme-agents" id="langgraph">
+  <div class="section-header">
+    <div class="section-icon">🕸️</div>
+    <h2>LangGraph — Stateful Agents</h2>
+    <span class="week-badge">Week 12</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Core Concepts</h3>
+      <pre">from langgraph.graph import StateGraph, END
+from typing import TypedDict, Annotated
+import operator
+
+# 1. Define state schema
+class AgentState(TypedDict):
+    messages: Annotated[list, operator.add]  # append-only
+    code: str
+    issues: list[str]
+    iteration: int
+
+# 2. Define nodes (functions that transform state)
+def analyze_code(state: AgentState) -> dict:
+    issues = llm.invoke(f"Find issues in:\n{state['code']}")
+    return {"issues": issues, "iteration": state["iteration"] + 1}
+
+def generate_fix(state: AgentState) -> dict:
+    fix = llm.invoke(f"Fix these issues:\n{state['issues']}")
+    return {"code": fix}
+
+def should_continue(state: AgentState) -> str:
+    if state["iteration"] >= 3 or not state["issues"]:
+        return "end"
+    return "fix"
+
+# 3. Build graph
+graph = StateGraph(AgentState)
+graph.add_node("analyze", analyze_code)
+graph.add_node("fix", generate_fix)
+graph.set_entry_point("analyze")
+graph.add_conditional_edges("analyze", should_continue,
+    {"fix": "fix", "end": END})
+graph.add_edge("fix", "analyze")
+
+app = graph.compile()
+result = app.invoke({"code": my_code, "iteration": 0})</pre>
+    </div>
+    <div class="card">
+      <h3>Human-in-the-Loop</h3>
+      <pre">from langgraph.checkpoint.memory import MemorySaver
+
+# Persistence between steps
+memory = MemorySaver()
+app = graph.compile(
+    checkpointer=memory,
+    interrupt_before=["generate_fix"]  # pause here
+)
+
+thread = {"configurable": {"thread_id": "review-1"}}
+
+# Run until interrupt
+state = app.invoke({"code": my_code}, config=thread)
+# Agent pauses before "generate_fix" node
+
+# Human reviews, approves
+print("Issues found:", state["issues"])
+user_approved = input("Approve fix? (y/n): ")
+
+if user_approved == "y":
+    # Resume from where it stopped
+    final = app.invoke(None, config=thread)
+
+# This pattern = safe AI automation
+# Agent proposes, human approves before irreversible action</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://langchain-ai.github.io/langgraph/" target="_blank">LangGraph Docs</a>
+    <a class="res-link" href="https://langchain-ai.github.io/langgraph/tutorials/" target="_blank">LangGraph Tutorials</a>
+    <a class="res-link" href="https://github.com/langchain-ai/langgraph-studio" target="_blank">LangGraph Studio (visual)</a>
+  </div>
+</section>
+
+<!-- ═══════════ MULTI-AGENT ═══════════ -->
+<section class="section theme-agents" id="multiagent">
+  <div class="section-header">
+    <div class="section-icon">👥</div>
+    <h2>Multi-Agent Systems</h2>
+    <span class="week-badge">Week 13</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>CrewAI — Role-Based Agents</h3>
+      <pre">from crewai import Agent, Task, Crew
+
+# Define agents with roles
+code_reviewer = Agent(
+    role="Senior Code Reviewer",
+    goal="Identify bugs and security issues in code",
+    backstory="10 years of Python experience, security expert",
+    tools=[search_codebase, run_static_analysis],
+    llm=ChatOpenAI(model="gpt-4o"),
+    verbose=True
+)
+
+test_writer = Agent(
+    role="QA Engineer",
+    goal="Write comprehensive pytest tests for given code",
+    backstory="Expert in pytest, TDD, edge case discovery",
+    tools=[run_python_code],
+    llm=ChatOpenAI(model="gpt-4o")
+)
+
+# Define tasks
+review_task = Task(
+    description="Review this code: {code}. List all issues.",
+    expected_output="JSON with issues list and severity",
+    agent=code_reviewer
+)
+
+test_task = Task(
+    description="Write pytest tests for the reviewed code",
+    expected_output="Complete pytest file with 10+ test cases",
+    agent=test_writer,
+    context=[review_task]  # receives review output
+)
+
+crew = Crew(agents=[code_reviewer, test_writer],
+            tasks=[review_task, test_task])
+result = crew.kickoff(inputs={"code": my_code})</pre>
+    </div>
+    <div class="card">
+      <h3>Multi-Agent Patterns</h3>
+      <table>
+        <tr><th>Pattern</th><th>Structure</th><th>Use When</th></tr>
+        <tr><td>Sequential</td><td>A → B → C (output feeds next)</td><td>Pipeline with fixed stages</td></tr>
+        <tr><td>Parallel</td><td>A, B, C run simultaneously</td><td>Independent subtasks</td></tr>
+        <tr><td>Hierarchical</td><td>Manager delegates to workers</td><td>Complex tasks with specialisation</td></tr>
+        <tr><td>Debate</td><td>Agents argue, judge decides</td><td>Improving answer quality</td></tr>
+        <tr><td>Reflection</td><td>Agent critiques its own output, iterates</td><td>Code generation, writing</td></tr>
+      </table>
+      <div class="warn"><strong>Warning:</strong> Multi-agent systems multiply costs and latency. Start with a single agent + tools. Only add agents when one agent genuinely can't handle the task.</div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.crewai.com/" target="_blank">CrewAI Docs</a>
+    <a class="res-link" href="https://microsoft.github.io/autogen/0.2/" target="_blank">AutoGen Docs</a>
+    <a class="res-link" href="https://arxiv.org/abs/2402.01680" target="_blank">Multi-Agent Survey Paper</a>
+  </div>
+</section>
+
+<!-- ═══════════ MODEL LANDSCAPE ═══════════ -->
+<section class="section theme-ft" id="model-landscape">
+  <div class="section-header">
+    <div class="section-icon">🗺️</div>
+    <h2>Model Landscape</h2>
+    <span class="week-badge">Ongoing reference</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Frontier Models</h3>
+      <table>
+        <tr><th>Model</th><th>Provider</th><th>Strengths</th><th>Context</th></tr>
+        <tr><td>GPT-4o</td><td>OpenAI</td><td>General, vision, tool use, reliability</td><td>128k</td></tr>
+        <tr><td>Claude Sonnet 4.6</td><td>Anthropic</td><td>Coding, long docs, nuance, safety</td><td>200k</td></tr>
+        <tr><td>Gemini 1.5 Pro</td><td>Google</td><td>Massive context, multimodal</td><td>1M</td></tr>
+        <tr><td>Gemini 2.0 Flash</td><td>Google</td><td>Speed + cost, multimodal</td><td>1M</td></tr>
+        <tr><td>Llama 3.1 70B</td><td>Meta (OSS)</td><td>Open source, self-host, strong</td><td>128k</td></tr>
+        <tr><td>Mistral Large</td><td>Mistral</td><td>EU, GDPR-friendly, multilingual</td><td>128k</td></tr>
+        <tr><td>Qwen2.5-Coder</td><td>Alibaba (OSS)</td><td>Code tasks, local inference</td><td>128k</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Choosing the Right Model</h3>
+      <div class="cheat">
+        <strong>Highest quality (no cost concern):</strong> GPT-4o or Claude Sonnet<br>
+        <strong>Production at scale (cost matters):</strong> GPT-4o-mini or Claude Haiku<br>
+        <strong>Massive context (1M+):</strong> Gemini 1.5 Pro<br>
+        <strong>Code generation:</strong> Claude Sonnet or GPT-4o (they're neck-and-neck)<br>
+        <strong>Self-hosted / privacy:</strong> Llama 3.1 70B via Ollama<br>
+        <strong>Code embeddings (your capstone):</strong> voyage-code-2 or CodeBERT<br><br>
+        <em>In interviews: always mention you benchmark before choosing — not just pick the most expensive model.</em>
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://artificialanalysis.ai/" target="_blank">Artificial Analysis (model benchmarks)</a>
+    <a class="res-link" href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" target="_blank">Open LLM Leaderboard</a>
+    <a class="res-link" href="https://huggingface.co/spaces/bigcode/bigcode-models-leaderboard" target="_blank">BigCode Leaderboard (coding)</a>
+    <a class="res-link" href="https://lmarena.ai/" target="_blank">LM Arena (human evals)</a>
+  </div>
+</section>
+
+<!-- ═══════════ FINE-TUNING ═══════════ -->
+<section class="section theme-ft" id="finetuning">
+  <div class="section-header">
+    <div class="section-icon">🎛️</div>
+    <h2>Fine-tuning: LoRA / QLoRA</h2>
+    <span class="week-badge">Week 14</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>When to Fine-tune vs RAG vs Prompt</h3>
+      <table>
+        <tr><th>Approach</th><th>Use when</th><th>Cost</th></tr>
+        <tr><td>Prompt engineering</td><td>General task, model is capable</td><td>Free</td></tr>
+        <tr><td>RAG</td><td>Need external/current knowledge</td><td>Low (retrieval cost)</td></tr>
+        <tr><td>Fine-tuning</td><td>Specific style/format/domain, consistent behaviour</td><td>High (training)</td></tr>
+        <tr><td>Both RAG + FT</td><td>Domain-specific knowledge + consistent format</td><td>Highest</td></tr>
+      </table>
+      <div class="callout"><strong>Interview answer:</strong> Fine-tune for behaviour and style; use RAG for knowledge. If the model keeps getting the format wrong despite good prompts → fine-tune. If it lacks facts → RAG.</div>
+    </div>
+    <div class="card">
+      <h3>LoRA — Low-Rank Adaptation</h3>
+      <pre">## LoRA: instead of updating all weights W,
+## add small low-rank matrices ΔW = A × B
+## Only A and B are trained (much fewer params)
+
+## Original: W ∈ R^(d×k)   — billions of params
+## LoRA:     A ∈ R^(d×r), B ∈ R^(r×k)  — r << d
+## r = rank, typically 4-64
+
+from peft import LoraConfig, get_peft_model, TaskType
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.1-8B-Instruct",
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+
+lora_config = LoraConfig(
+    r=16,              # rank — higher = more capacity
+    lora_alpha=32,     # scaling factor
+    target_modules=["q_proj","v_proj"],  # which layers
+    lora_dropout=0.1,
+    task_type=TaskType.CAUSAL_LM
+)
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+# → trainable params: 6.8M (0.08% of total!)</pre>
+    </div>
+    <div class="card">
+      <h3>QLoRA — Quantized LoRA</h3>
+      <pre">## QLoRA: 4-bit quantize the base model,
+## then apply LoRA on top
+## Reduces VRAM requirement by ~4x
+## Train 70B model on single A100!
+
+from transformers import BitsAndBytesConfig
+
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",         # NormalFloat4
+    bnb_4bit_compute_dtype=torch.float16,
+    bnb_4bit_use_double_quant=True     # nested quantization
+)
+
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-3.1-8B-Instruct",
+    quantization_config=bnb_config,
+    device_map="auto"
+)
+# Then apply LoRA as before
+# For your use case: fine-tune on code review examples</pre>
+    </div>
+    <div class="card">
+      <h3>Training Data Format</h3>
+      <pre">## Instruction-following format (Alpaca style)
+training_data = [
+    {
+        "instruction": "Review this Python function for issues",
+        "input": "def add(a, b):\n    return a - b",
+        "output": "Bug found: function is named 'add' but uses '-' not '+'"
+    },
+    ...
+]
+
+## Chat format (preferred for instruction models)
+training_data = [
+    {"messages": [
+        {"role":"system","content":"You are a code reviewer."},
+        {"role":"user","content":"Review: def add(a,b): return a-b"},
+        {"role":"assistant","content":"Bug: subtraction instead of addition"}
+    ]},
+    ...
+]
+
+# Recommended tools:
+# - Unsloth: 2x faster training, less VRAM
+# - Axolotl: config-based, production-ready
+# - TRL: HuggingFace's training library</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://huggingface.co/docs/peft/index" target="_blank">HuggingFace PEFT Docs</a>
+    <a class="res-link" href="https://arxiv.org/abs/2305.14314" target="_blank">QLoRA Paper</a>
+    <a class="res-link" href="https://github.com/unslothai/unsloth" target="_blank">Unsloth (fast fine-tuning)</a>
+    <a class="res-link" href="https://github.com/OpenAccess-AI-Collective/axolotl" target="_blank">Axolotl</a>
+  </div>
+</section>
+
+<!-- ═══════════ LOCAL LLMS ═══════════ -->
+<section class="section theme-ft" id="local-llms">
+  <div class="section-header">
+    <div class="section-icon">💻</div>
+    <h2>Local LLMs</h2>
+    <span class="week-badge">Week 3</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Ollama — Run Models Locally</h3>
+      <pre">## Install: curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull and run
+ollama pull llama3.1          # 8B — needs 8GB RAM
+ollama pull codellama:13b     # Code-specific
+ollama pull mistral           # Fast, good quality
+ollama run llama3.1           # Interactive chat
+
+# OpenAI-compatible API (same interface!)
+ollama serve  # starts server at localhost:11434
+
+# Use with LangChain
+from langchain_ollama import ChatOllama
+llm = ChatOllama(model="llama3.1", temperature=0)
+
+# Use with OpenAI client (drop-in!)
+client = OpenAI(base_url="http://localhost:11434/v1",
+                api_key="ollama")
+response = client.chat.completions.create(
+    model="llama3.1",
+    messages=[{"role":"user","content":"hello"}]
+)</pre>
+    </div>
+    <div class="card">
+      <h3>When to Use Local vs API</h3>
+      <table>
+        <tr><th></th><th>Local (Ollama)</th><th>API (OpenAI/Anthropic)</th></tr>
+        <tr><td>Privacy</td><td>✅ Data never leaves machine</td><td>❌ Data sent to provider</td></tr>
+        <tr><td>Cost</td><td>✅ Free (hardware only)</td><td>❌ Per-token cost</td></tr>
+        <tr><td>Quality</td><td>❌ Smaller models, lower quality</td><td>✅ Best frontier models</td></tr>
+        <tr><td>Setup</td><td>❌ Needs capable hardware</td><td>✅ Just an API key</td></tr>
+        <tr><td>Latency</td><td>❌ Slower (GPU speed)</td><td>✅ Optimised infra</td></tr>
+        <tr><td>Use in interview</td><td>Dev/testing, privacy demos</td><td>Production, showcasing quality</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://ollama.com/" target="_blank">Ollama Docs</a>
+    <a class="res-link" href="https://lmstudio.ai/" target="_blank">LM Studio (GUI)</a>
+    <a class="res-link" href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" target="_blank">Open LLM Leaderboard</a>
+  </div>
+</section>
+
+<!-- ═══════════ FASTAPI ═══════════ -->
+<section class="section theme-agents" id="fastapi">
+  <div class="section-header">
+    <div class="section-icon">🚀</div>
+    <h2>FastAPI for AI Backends</h2>
+    <span class="week-badge">Week 3</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>FastAPI + LLM + Streaming</h3>
+      <pre">from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from openai import AsyncOpenAI
+
+app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"],
+    allow_methods=["*"], allow_headers=["*"])
+client = AsyncOpenAI()
+
+class ChatRequest(BaseModel):
+    message: str
+    session_id: str = "default"
+
+async def stream_response(message: str):
+    async with client.chat.completions.stream(
+        model="gpt-4o",
+        messages=[{"role":"user","content":message}]
+    ) as stream:
+        async for chunk in stream:
+            text = chunk.choices[0].delta.content
+            if text:
+                yield f"data: {text}\n\n"
+    yield "data: [DONE]\n\n"
+
+@app.post("/chat/stream")
+async def chat_stream(req: ChatRequest):
+    return StreamingResponse(
+        stream_response(req.message),
+        media_type="text/event-stream"
+    )
+
+# Run: uvicorn main:app --reload --port 8000</pre>
+    </div>
+    <div class="card">
+      <h3>Code Review API Endpoint</h3>
+      <pre">class ReviewRequest(BaseModel):
+    code: str
+    language: str = "python"
+    focus: list[str] = ["bugs", "security", "performance"]
+
+class ReviewResponse(BaseModel):
+    issues: list[dict]   # [{line, type, description, severity}]
+    score: int           # 1-10
+    summary: str
+
+@app.post("/review", response_model=ReviewResponse)
+async def review_code(req: ReviewRequest):
+    prompt = f"""Review this {req.language} code.
+Focus on: {', '.join(req.focus)}
+
+```{req.language}
+{req.code}
+```
+
+Return JSON only matching this schema:
+{ReviewResponse.schema_json()}"""
+
+    response = await client.beta.chat.completions.parse(
+        model="gpt-4o",
+        messages=[{"role":"user","content":prompt}],
+        response_format=ReviewResponse
+    )
+    return response.choices[0].message.parsed</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://fastapi.tiangolo.com/" target="_blank">FastAPI Docs</a>
+    <a class="res-link" href="https://railway.app/" target="_blank">Railway (backend deploy)</a>
+    <a class="res-link" href="https://docs.pydantic.dev/latest/" target="_blank">Pydantic Docs</a>
+  </div>
+</section>
+
+<!-- ═══════════ OBSERVABILITY ═══════════ -->
+<section class="section theme-agents" id="observability">
+  <div class="section-header">
+    <div class="section-icon">🔭</div>
+    <h2>Observability & Cost</h2>
+    <span class="week-badge">Week 10, 15</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>What to Monitor in Production</h3>
+      <ul>
+        <li><strong>Latency:</strong> P50, P95, P99 response times</li>
+        <li><strong>Token usage:</strong> Input + output tokens per request</li>
+        <li><strong>Cost per session:</strong> Track spend by user/feature</li>
+        <li><strong>Error rate:</strong> API failures, timeouts, context overflows</li>
+        <li><strong>Quality scores:</strong> RAGAS metrics, user feedback (thumbs)</li>
+        <li><strong>Cache hit rate:</strong> How often prompt cache is used</li>
+      </ul>
+      <div class="callout"><strong>Your Intel angle:</strong> You built validation pipelines. LLM observability is the same — define what "good" looks like, instrument everything, catch regressions automatically. This is a differentiator in interviews.</div>
+    </div>
+    <div class="card">
+      <h3>Cost Optimization Techniques</h3>
+      <pre">## 1. Prompt Caching (Anthropic)
+# Cache large system prompts (saves 90% of input cost)
+# Cached tokens: $0.30/1M vs $3.00/1M normal
+
+## 2. Model routing
+# Route simple queries to cheap models
+def route_model(query: str) -> str:
+    if len(query) < 200 and is_simple(query):
+        return "gpt-4o-mini"   # $0.15/1M
+    return "gpt-4o"            # $2.50/1M
+
+## 3. Semantic caching (GPTCache)
+# Cache LLM responses, return cached if similar query
+from gptcache import cache
+from gptcache.manager import get_data_manager
+cache.init(embedding_func=your_embed_fn,
+           data_manager=get_data_manager())
+
+## 4. Output length control
+# max_tokens + stop sequences
+# Don't pay for tokens you don't need
+
+## 5. Batching (OpenAI Batch API)
+# 50% discount for non-real-time requests
+# Process overnight: evals, fine-tuning data prep</pre>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://docs.smith.langchain.com/" target="_blank">LangSmith</a>
+    <a class="res-link" href="https://github.com/zilliztech/GPTCache" target="_blank">GPTCache (semantic cache)</a>
+    <a class="res-link" href="https://platform.openai.com/docs/guides/batch" target="_blank">OpenAI Batch API</a>
+    <a class="res-link" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank">Anthropic Prompt Caching</a>
+  </div>
+</section>
+
+<!-- ═══════════ DSA PATTERN MAP ═══════════ -->
+<section class="section theme-dsa" id="dsa-patterns">
+  <div class="section-header">
+    <div class="section-icon">📐</div>
+    <h2>DSA Pattern Map</h2>
+    <span class="week-badge">Parallel track</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Pattern → Problem Mapping</h3>
+      <div class="cheat">
+        Sorted array + find pair → <strong>Two Pointers</strong><br>
+        Subarray / substring → <strong>Sliding Window</strong><br>
+        Count / group / exists → <strong>HashMap</strong><br>
+        Find Kth / top K → <strong>Heap</strong><br>
+        Generate all combos → <strong>Backtracking</strong><br>
+        Optimal substructure → <strong>DP</strong><br>
+        Connected components → <strong>DFS/BFS</strong><br>
+        Dependencies / ordering → <strong>Topological Sort</strong><br>
+        Search sorted array → <strong>Binary Search</strong><br>
+        LIFO, matching brackets → <strong>Stack</strong><br>
+        Level-by-level → <strong>BFS + Queue</strong>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Complexity Cheat Sheet</h3>
+      <div class="cheat">
+        Two Pointers / Sliding Window: <strong>O(n)</strong><br>
+        HashMap: <strong>O(1)</strong> lookup avg<br>
+        Binary Search: <strong>O(log n)</strong><br>
+        DFS / BFS: <strong>O(V + E)</strong><br>
+        Heap push/pop: <strong>O(log n)</strong><br>
+        Sort: <strong>O(n log n)</strong><br>
+        1D DP: <strong>O(n)</strong> time, <strong>O(1)</strong> space (optimised)<br>
+        2D DP: <strong>O(m×n)</strong><br>
+        Backtracking: <strong>O(2^n)</strong> worst case<br>
+        Trie: <strong>O(m)</strong> per op (m = word length)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DSA CODE ═══════════ -->
+<section class="section theme-dsa" id="dsa-code">
+  <div class="section-header">
+    <div class="section-icon">💻</div>
+    <h2>DSA Key Code Templates</h2>
+    <span class="week-badge">Weeks 1–16</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Sliding Window + Two Pointers</h3>
+      <pre">### Longest Substring Without Repeats — O(n)
+def lengthOfLongestSubstring(s):
+    seen = {}; left = maxLen = 0
+    for right, c in enumerate(s):
+        if c in seen and seen[c] >= left:
+            left = seen[c] + 1
+        seen[c] = right
+        maxLen = max(maxLen, right - left + 1)
+    return maxLen
+
+### Two Sum (sorted) — O(n)
+def twoSum(numbers, target):
+    l, r = 0, len(numbers) - 1
+    while l < r:
+        s = numbers[l] + numbers[r]
+        if s == target: return [l+1, r+1]
+        elif s < target: l += 1
+        else: r -= 1</pre>
+    </div>
+    <div class="card">
+      <h3>BFS + Topological Sort</h3>
+      <pre">from collections import deque, defaultdict
+
+### Course Schedule (cycle detection)
+def canFinish(n, prerequisites):
+    adj = defaultdict(list)
+    indegree = [0] * n
+    for a, b in prerequisites:
+        adj[b].append(a); indegree[a] += 1
+    q = deque(i for i in range(n) if indegree[i]==0)
+    done = 0
+    while q:
+        node = q.popleft(); done += 1
+        for nb in adj[node]:
+            indegree[nb] -= 1
+            if indegree[nb] == 0: q.append(nb)
+    return done == n</pre>
+    </div>
+    <div class="card">
+      <h3>DP Patterns</h3>
+      <pre">### Coin Change — O(amount × coins)
+def coinChange(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for coin in coins:
+        for x in range(coin, amount + 1):
+            dp[x] = min(dp[x], dp[x-coin] + 1)
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+### LIS — O(n log n)
+import bisect
+def lengthOfLIS(nums):
+    tails = []
+    for n in nums:
+        pos = bisect.bisect_left(tails, n)
+        if pos == len(tails): tails.append(n)
+        else: tails[pos] = n
+    return len(tails)</pre>
+    </div>
+    <div class="card">
+      <h3>Heap + Backtracking</h3>
+      <pre">import heapq
+
+### Kth Largest — O(n log k)
+def findKthLargest(nums, k):
+    heap = nums[:k]
+    heapq.heapify(heap)
+    for n in nums[k:]:
+        if n > heap[0]: heapq.heapreplace(heap, n)
+    return heap[0]
+
+### Subsets — O(2^n)
+def subsets(nums):
+    result = []
+    def bt(start, path):
+        result.append(path[:])
+        for i in range(start, len(nums)):
+            path.append(nums[i])
+            bt(i+1, path)
+            path.pop()
+    bt(0, [])
+    return result</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ PROJECT GUIDES ═══════════ -->
+
+<!-- PROJECT 1: CHATBOT -->
+<section class="section theme-llm" id="proj-chatbot">
+  <div class="section-header">
+    <div class="section-icon">💬</div>
+    <h2>Project 1 — Multi-turn Chatbot</h2>
+    <span class="week-badge">Week 4 · Core</span>
+  </div>
+  <div class="callout"><strong>Goal:</strong> A live, deployed chatbot with streaming responses and conversation memory. This is your "hello world" that proves you can ship — not just call an API.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Tech Stack</h3>
+      <ul>
+        <li><strong>Frontend:</strong> React + Tailwind + EventSource (SSE)</li>
+        <li><strong>Backend:</strong> FastAPI + AsyncOpenAI</li>
+        <li><strong>Memory:</strong> In-memory dict keyed by session_id (start), then Redis</li>
+        <li><strong>Deploy:</strong> Vercel (frontend) + Railway (FastAPI backend)</li>
+        <li><strong>Extras:</strong> React-markdown for rendering, code highlighting</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Build Sequence</h3>
+      <ol style="padding-left:16px;font-size:13px;color:var(--muted);line-height:2;">
+        <li>FastAPI <code>/chat/stream</code> endpoint — SSE streaming</li>
+        <li>Conversation history stored per <code>session_id</code></li>
+        <li>React frontend — input box, message thread, streaming render</li>
+        <li>Markdown rendering for code blocks</li>
+        <li>System prompt UI — let user customise the AI persona</li>
+        <li>Deploy both ends, get a live URL</li>
+        <li><em>Stretch:</em> Token count display, cost estimator per session</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Core Backend Code</h3>
+      <pre">@app.post("/chat/stream")
+async def chat_stream(req: ChatRequest):
+    # Build message history
+    history = session_store.get(req.session_id, [])
+    history.append({"role":"user","content":req.message})
+
+    async def generate():
+        full_response = ""
+        async with client.chat.completions.stream(
+            model="gpt-4o",
+            messages=[SYSTEM_MSG] + history,
+            max_tokens=1000
+        ) as stream:
+            async for chunk in stream:
+                text = chunk.choices[0].delta.content or ""
+                full_response += text
+                yield f"data: {json.dumps({'text':text})}\n\n"
+
+        # Save assistant reply to history
+        history.append({"role":"assistant","content":full_response})
+        session_store[req.session_id] = history[-20:]  # keep last 20
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")</pre>
+    </div>
+    <div class="card">
+      <h3>React Streaming Consumer</h3>
+      <pre">const sendMessage = async (message) => {
+  setMessages(prev => [...prev, {role:'user', content:message}]);
+  setStreaming(true);
+  let buffer = "";
+
+  const response = await fetch('/chat/stream', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({message, session_id: sessionId})
+  });
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) break;
+    const lines = decoder.decode(value).split('\n');
+    for (const line of lines) {
+      if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+        const {text} = JSON.parse(line.slice(6));
+        buffer += text;
+        setCurrentResponse(buffer);  // live update
+      }
+    }
+  }
+  setMessages(prev => [...prev, {role:'assistant', content:buffer}]);
+  setStreaming(false);
+};</pre>
+    </div>
+    <div class="card">
+      <h3>What to Showcase in README</h3>
+      <ul>
+        <li>Live demo GIF (record with Loom, convert to GIF with ezgif)</li>
+        <li>Architecture diagram: React → FastAPI → OpenAI → SSE back</li>
+        <li>Token cost per conversation (add this — almost nobody does)</li>
+        <li>"Why streaming?" — explain the UX rationale, not just that you did it</li>
+      </ul>
+      <div class="callout"><strong>What this proves:</strong> Full-stack AI integration, async FastAPI, streaming UX, deployment. Most "AI portfolio projects" are Colab notebooks. A deployed, working URL is an automatic differentiator.</div>
+    </div>
+    <div class="card">
+      <h3>Common Pitfalls</h3>
+      <ul>
+        <li><strong>CORS errors:</strong> Add middleware before routes, not after</li>
+        <li><strong>History growing unbounded:</strong> Slice to last N turns</li>
+        <li><strong>SSE in React:</strong> Don't use EventSource for POST — use fetch + ReadableStream</li>
+        <li><strong>Railway cold starts:</strong> Add a /ping health endpoint, wake it before demo</li>
+        <li><strong>API key exposure:</strong> Never commit keys — use Railway env vars</li>
+      </ul>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://platform.openai.com/docs/guides/text-generation" target="_blank">OpenAI Chat Completions</a>
+    <a class="res-link" href="https://railway.app/" target="_blank">Railway Deploy</a>
+    <a class="res-link" href="https://vercel.com/docs" target="_blank">Vercel Deploy</a>
+    <a class="res-link" href="https://github.com/remarkjs/react-markdown" target="_blank">react-markdown</a>
+  </div>
+</section>
+
+<!-- PROJECT 2: RAG -->
+<section class="section theme-rag" id="proj-rag">
+  <div class="section-header">
+    <div class="section-icon">📚</div>
+    <h2>Project 2 — Document Q&amp;A (RAG)</h2>
+    <span class="week-badge">Week 8 · Feature</span>
+  </div>
+  <div class="callout"><strong>Goal:</strong> Upload any PDF → ask questions → get cited answers. The classic RAG demo, but built with production-grade eval (RAGAS), not just vibes.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Tech Stack</h3>
+      <ul>
+        <li><strong>Backend:</strong> FastAPI + LangChain LCEL + Pinecone</li>
+        <li><strong>Embedding:</strong> text-embedding-3-small (OpenAI)</li>
+        <li><strong>LLM:</strong> GPT-4o for answers, GPT-4o-mini for reranking</li>
+        <li><strong>PDF parsing:</strong> PyMuPDF (fitz) — handles tables + figures better than pypdf</li>
+        <li><strong>Evals:</strong> RAGAS — run on a test set of 20 Q&amp;A pairs</li>
+        <li><strong>Frontend:</strong> React — drag-drop upload, chat interface, citation highlights</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Build Sequence</h3>
+      <ol style="padding-left:16px;font-size:13px;color:var(--muted);line-height:2;">
+        <li>PDF ingestion: PyMuPDF → text extraction per page</li>
+        <li>Chunking: RecursiveCharacterTextSplitter (1000 / 200)</li>
+        <li>Embed + upsert to Pinecone (namespace = document_id)</li>
+        <li>Query pipeline: embed question → retrieve k=8 → rerank → top 3</li>
+        <li>LangChain RAG chain with citations (return source chunks)</li>
+        <li>FastAPI endpoints: /upload, /query, /documents</li>
+        <li>React UI: file upload, chat, source citations panel</li>
+        <li>RAGAS eval: 20 test Q&amp;A pairs, log metrics to LangSmith</li>
+        <li><em>Stretch:</em> Multi-document support, per-doc namespaces</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Ingestion Pipeline</h3>
+      <pre">import fitz  # PyMuPDF
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from pinecone import Pinecone
+
+async def ingest_pdf(file_bytes: bytes, doc_id: str):
+    # 1. Extract text
+    pdf = fitz.open(stream=file_bytes, filetype="pdf")
+    pages = [page.get_text() for page in pdf]
+    full_text = "\n\n".join(pages)
+
+    # 2. Chunk
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000, chunk_overlap=200
+    )
+    chunks = splitter.split_text(full_text)
+
+    # 3. Embed
+    embedder = OpenAIEmbeddings(model="text-embedding-3-small")
+    embeddings = await embedder.aembed_documents(chunks)
+
+    # 4. Upsert to Pinecone (namespace = doc_id)
+    index = Pinecone().Index("rag-docs")
+    vectors = [
+        {"id": f"{doc_id}-{i}", "values": emb,
+         "metadata": {"text": chunk, "doc_id": doc_id, "chunk": i}}
+        for i, (chunk, emb) in enumerate(zip(chunks, embeddings))
+    ]
+    index.upsert(vectors=vectors, namespace=doc_id)
+    return {"chunks": len(chunks)}</pre>
+    </div>
+    <div class="card">
+      <h3>Query + Citation Pipeline</h3>
+      <pre">from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+
+RAG_PROMPT = ChatPromptTemplate.from_template("""
+Answer the question based ONLY on the context below.
+For each claim, cite the chunk number like [1], [2].
+If the answer is not in the context, say "I don't know."
+
+Context:
+{context}
+
+Question: {question}
+""")
+
+async def query_doc(question: str, doc_id: str) -> dict:
+    # Retrieve
+    index = Pinecone().Index("rag-docs")
+    q_emb = OpenAIEmbeddings().embed_query(question)
+    results = index.query(vector=q_emb, top_k=5,
+                          namespace=doc_id, include_metadata=True)
+
+    # Format context with chunk numbers
+    chunks = [m["metadata"]["text"] for m in results["matches"]]
+    context = "\n\n".join(f"[{i+1}] {c}" for i,c in enumerate(chunks))
+
+    # Generate
+    chain = RAG_PROMPT | ChatOpenAI(model="gpt-4o") | StrOutputParser()
+    answer = await chain.ainvoke({"context":context,"question":question})
+
+    return {"answer": answer, "sources": chunks}</pre>
+    </div>
+    <div class="card">
+      <h3>RAGAS Eval Setup</h3>
+      <pre">## Build a 20-question test set BEFORE building the system
+## Pick a real document (a paper, a policy doc, a manual)
+## Write 20 question-answer pairs by hand
+
+test_set = [
+    {"question": "What is the penalty for late returns?",
+     "ground_truth": "A 15% restocking fee is applied..."},
+    ...
+]
+
+## Run eval after every significant prompt change
+from ragas import evaluate
+from ragas.metrics import faithfulness, answer_relevancy
+
+results_data = []
+for item in test_set:
+    result = await query_doc(item["question"], doc_id)
+    results_data.append({
+        "question":    item["question"],
+        "answer":      result["answer"],
+        "contexts":    result["sources"],
+        "ground_truth":item["ground_truth"]
+    })
+
+scores = evaluate(Dataset.from_list(results_data),
+                  metrics=[faithfulness, answer_relevancy])
+print(scores)  # log to LangSmith for tracking over time</pre>
+    </div>
+    <div class="card">
+      <h3>What to Showcase + Pitfalls</h3>
+      <ul>
+        <li><strong>Show the eval scores</strong> in your README — "Faithfulness: 0.91, Answer Relevancy: 0.87". Almost no portfolio projects include this. It's your Intel quality instinct on display.</li>
+        <li><strong>Show citations</strong> highlighted in the UI — orange border on the source chunk used</li>
+        <li><strong>Pitfall — PyPDF2:</strong> It silently drops tables and figures. Use PyMuPDF (fitz)</li>
+        <li><strong>Pitfall — same namespace:</strong> Multiple uploads overwrite each other. Namespace by doc_id.</li>
+        <li><strong>Pitfall — no fallback:</strong> Add "I don't know" instruction — LLMs hallucinate when forced to answer</li>
+      </ul>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://python.langchain.com/docs/tutorials/rag/" target="_blank">LangChain RAG Tutorial</a>
+    <a class="res-link" href="https://docs.pinecone.io/" target="_blank">Pinecone Docs</a>
+    <a class="res-link" href="https://docs.ragas.io/en/stable/" target="_blank">RAGAS Docs</a>
+    <a class="res-link" href="https://pymupdf.readthedocs.io/" target="_blank">PyMuPDF Docs</a>
+  </div>
+</section>
+
+<!-- PROJECT 3: AGENT -->
+<section class="section theme-agents" id="proj-agent">
+  <div class="section-header">
+    <div class="section-icon">🤖</div>
+    <h2>Project 3 — Test Generator Agent</h2>
+    <span class="week-badge">Week 14 · Feature</span>
+  </div>
+  <div class="callout"><strong>Goal:</strong> Give the agent a GitHub repo URL → it reads the codebase → generates pytest test files → opens a real PR. Multi-step, multi-tool, real-world output. This is the project that gets reactions in interviews.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Tech Stack</h3>
+      <ul>
+        <li><strong>Orchestration:</strong> LangGraph (stateful agent with retry logic)</li>
+        <li><strong>GitHub integration:</strong> PyGitHub (clone, create branch, commit, PR)</li>
+        <li><strong>Code parsing:</strong> Python <code>ast</code> module (extract functions, classes, docstrings)</li>
+        <li><strong>LLM:</strong> Claude Sonnet (better at code than GPT-4o in benchmarks)</li>
+        <li><strong>Validation:</strong> Run generated tests in a subprocess sandbox</li>
+        <li><strong>Frontend:</strong> Simple React form (repo URL input + live agent log stream)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Agent Architecture (LangGraph)</h3>
+      <pre">State: {repo_url, files, parsed_functions, tests, pr_url, iteration}
+
+Nodes:
+  clone_repo      → git clone, list .py files
+  parse_code      → ast.parse each file, extract functions
+  generate_tests  → LLM generates pytest for each function
+  validate_tests  → subprocess.run(pytest), check exit code
+  fix_tests       → if validation fails, LLM fixes (max 3 retries)
+  open_pr         → PyGitHub: branch, commit, PR
+
+Edges:
+  clone → parse → generate → validate
+  validate → fix  (if tests fail AND iteration < 3)
+  validate → open_pr  (if tests pass)
+  fix → validate  (loop back)</pre>
+    </div>
+    <div class="card">
+      <h3>Code Parsing with ast</h3>
+      <pre">import ast, inspect
+
+def extract_functions(source_code: str) -> list[dict]:
+    tree = ast.parse(source_code)
+    functions = []
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            functions.append({
+                "name": node.name,
+                "args": [a.arg for a in node.args.args],
+                "docstring": ast.get_docstring(node) or "",
+                "returns": ast.unparse(node.returns) if node.returns else None,
+                "source": ast.unparse(node),  # full function source
+                "lineno": node.lineno,
+                # Extract type hints for better test generation
+                "annotations": {
+                    a.arg: ast.unparse(node.args.annotations[i])
+                    for i, a in enumerate(node.args.args)
+                    if i < len(node.args.annotations)
+                }
+            })
+    return functions
+
+# Output feeds directly into test generation prompt
+# LLM gets: function name, args, type hints, docstring, source
+# Much better tests than just giving raw source</pre>
+    </div>
+    <div class="card">
+      <h3>Test Generation Prompt</h3>
+      <pre">TEST_PROMPT = """You are an expert Python test engineer.
+
+Generate comprehensive pytest tests for this function:
+
+Function name: {name}
+Arguments: {args}
+Type hints: {annotations}
+Docstring: {docstring}
+Source code:
+```python
+{source}
+```
+
+Requirements:
+- Test happy path (normal inputs)
+- Test edge cases (empty, None, 0, negative, max values)
+- Test error cases (invalid types, missing required args)
+- Use pytest.mark.parametrize for multiple inputs
+- Mock external dependencies with pytest-mock
+- Each test must have a clear docstring
+
+Return ONLY valid pytest code, no explanations.
+"""
+
+# Key: give the LLM full context, not just function name
+# Type hints dramatically improve test quality</pre>
+    </div>
+    <div class="card">
+      <h3>Validation + GitHub PR</h3>
+      <pre">import subprocess, tempfile
+from github import Github
+
+def validate_tests(test_code: str, source_code: str) -> dict:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Write source + tests to temp dir
+        (Path(tmpdir)/"module.py").write_text(source_code)
+        (Path(tmpdir)/"test_module.py").write_text(test_code)
+
+        result = subprocess.run(
+            ["python","-m","pytest","test_module.py","-v","--tb=short"],
+            cwd=tmpdir, capture_output=True, text=True, timeout=30
+        )
+        return {"passed": result.returncode==0, "output": result.stdout}
+
+def open_pr(repo_name: str, test_files: dict, token: str) -> str:
+    g = Github(token)
+    repo = g.get_repo(repo_name)
+    branch_name = f"ai-tests-{int(time.time())}"
+
+    # Create branch from main
+    base = repo.get_branch("main")
+    repo.create_git_ref(f"refs/heads/{branch_name}", base.commit.sha)
+
+    # Commit test files
+    for path, content in test_files.items():
+        repo.create_file(path, f"Add AI-generated tests for {path}",
+                        content, branch=branch_name)
+
+    # Open PR
+    pr = repo.create_pull(title="🤖 AI-generated pytest tests",
+        body="Generated by Test Generator Agent\n\nPassing: ✅",
+        head=branch_name, base="main")
+    return pr.html_url</pre>
+    </div>
+    <div class="card">
+      <h3>What This Proves + Pitfalls</h3>
+      <ul>
+        <li><strong>Proves:</strong> You can build real agentic workflows — not toy "ask the LLM a question" demos. Opening a real GitHub PR with working tests is something senior engineers respect.</li>
+        <li><strong>Showcase:</strong> Record a Loom of the agent running live. Show the PR it opened. Show the test results.</li>
+        <li><strong>Pitfall — import errors:</strong> Generated tests often import modules that don't exist in sandbox. Fix: parse imports from source and include them</li>
+        <li><strong>Pitfall — infinite retries:</strong> Always add max_iteration guard in LangGraph conditional edge</li>
+        <li><strong>Pitfall — large repos:</strong> Don't parse all files — filter to .py files under 500 lines, skip __init__, migrations, etc.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://langchain-ai.github.io/langgraph/" target="_blank">LangGraph Docs</a>
+    <a class="res-link" href="https://pygithub.readthedocs.io/" target="_blank">PyGitHub</a>
+    <a class="res-link" href="https://docs.python.org/3/library/ast.html" target="_blank">Python ast module</a>
+    <a class="res-link" href="https://docs.pytest.org/en/stable/" target="_blank">pytest Docs</a>
+  </div>
+</section>
+
+<!-- PROJECT 4: CAPSTONE -->
+<section class="section theme-agents" id="proj-capstone">
+  <div class="section-header">
+    <div class="section-icon">🔴</div>
+    <h2>Project 4 — AI Coding Assistant (Capstone)</h2>
+    <span class="week-badge">Weeks 17–22 · Capstone</span>
+  </div>
+  <div class="callout"><strong>Goal:</strong> A niche, opinionated dev tool that does one thing extremely well — code review, docstring generation, or test suggestion — accessible as a VS Code extension or a rich CLI. This is the project you lead every interview conversation with.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Pick Your Niche (Week 17 Decision)</h3>
+      <table>
+        <tr><th>Niche</th><th>Value prop</th><th>Complexity</th><th>Recommendation</th></tr>
+        <tr><td>Code Reviewer</td><td>Instant review with severity scoring, line-level comments</td><td>Medium</td><td>✅ Best if you want CLI</td></tr>
+        <tr><td>Docstring Generator</td><td>Parse function → generate Google/NumPy style docs</td><td>Lower</td><td>Good VS Code extension</td></tr>
+        <tr><td>Test Suggester</td><td>Analyse coverage gaps, suggest missing test cases</td><td>Medium</td><td>✅ Best if you want VS Code</td></tr>
+        <tr><td>PR Description Generator</td><td>Git diff → structured PR description + change summary</td><td>Lower</td><td>Good as GitHub Action</td></tr>
+      </table>
+      <div class="callout"><strong>Recommended combo:</strong> Code Reviewer CLI (rich terminal output) + VS Code extension wrapper around the same API. Two surfaces, one backend. Shows product thinking.</div>
+    </div>
+    <div class="card">
+      <h3>Tech Stack (Code Reviewer)</h3>
+      <ul>
+        <li><strong>CLI:</strong> Click (commands) + Rich (terminal UI — tables, panels, syntax highlight)</li>
+        <li><strong>Backend API:</strong> FastAPI — the CLI calls your own API (easy to add VS Code later)</li>
+        <li><strong>Code parsing:</strong> tree-sitter — language-agnostic, handles Python/JS/Java</li>
+        <li><strong>Code embeddings:</strong> voyage-code-2 or CodeBERT for codebase RAG</li>
+        <li><strong>LLM:</strong> Claude Sonnet (best on code) with structured outputs via Pydantic</li>
+        <li><strong>Evals:</strong> 50 code samples with known issues — measure precision/recall</li>
+        <li><strong>Deploy:</strong> FastAPI on Railway, CLI published to PyPI</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Code Parsing with tree-sitter</h3>
+      <pre">from tree_sitter import Language, Parser
+import tree_sitter_python as tspython
+
+PY_LANGUAGE = Language(tspython.language())
+parser = Parser(PY_LANGUAGE)
+
+def parse_python_file(source: str) -> list[dict]:
+    tree = parser.parse(bytes(source, "utf8"))
+
+    functions = []
+    # Query: find all function definitions
+    query = PY_LANGUAGE.query("""
+        (function_definition
+          name: (identifier) @name
+          parameters: (parameters) @params
+          body: (block) @body)
+    """)
+
+    for pattern, captures in query.matches(tree.root_node):
+        name_node  = captures.get("name")
+        body_node  = captures.get("body")
+        if name_node and body_node:
+            functions.append({
+                "name": source[name_node.start_byte:name_node.end_byte],
+                "source": source[body_node.start_byte:body_node.end_byte],
+                "start_line": name_node.start_point[0] + 1,
+            })
+    return functions
+
+# tree-sitter advantage over ast:
+# Works on INVALID Python (partial files, syntax errors)
+# Works on JS, Java, TypeScript, Go — same interface
+# Much faster for large files</pre>
+    </div>
+    <div class="card">
+      <h3>Rich CLI Output</h3>
+      <pre">from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.syntax import Syntax
+import click
+
+console = Console()
+
+@click.command()
+@click.argument("file_path")
+@click.option("--model", default="claude", help="LLM to use")
+def review(file_path: str, model: str):
+    """Review a Python file for issues."""
+    source = Path(file_path).read_text()
+
+    with console.status("[bold green]Analyzing code...", spinner="dots"):
+        result = call_review_api(source, model)
+
+    # Print file header
+    console.print(Panel(
+        Syntax(source[:500]+"...", "python", theme="dracula"),
+        title=f"📄 {file_path}",
+        border_style="blue"
+    ))
+
+    # Issues table
+    table = Table(title="Issues Found", border_style="red")
+    table.add_column("Line", style="cyan", width=6)
+    table.add_column("Severity", width=10)
+    table.add_column("Issue", style="white")
+    table.add_column("Fix", style="green")
+
+    for issue in result.issues:
+        severity_color = {"high":"red","medium":"yellow","low":"dim"}
+        table.add_row(
+            str(issue.line),
+            f"[{severity_color[issue.severity]}]{issue.severity}[/]",
+            issue.description,
+            issue.suggestion
+        )
+    console.print(table)
+    console.print(f"\n[bold]Score: {result.score}/10[/bold]")</pre>
+    </div>
+    <div class="card">
+      <h3>Codebase RAG (Context-Aware Reviews)</h3>
+      <pre">## What makes this 10x better than a basic reviewer:
+## Context — the assistant knows your entire codebase
+
+# On first run: index the codebase
+def index_codebase(root_dir: str):
+    functions = []
+    for py_file in Path(root_dir).rglob("*.py"):
+        source = py_file.read_text()
+        parsed = parse_python_file(source)
+        for fn in parsed:
+            functions.append({
+                "text": fn["source"],
+                "metadata": {"file": str(py_file), "name": fn["name"]}
+            })
+
+    # Embed with code-specific model
+    embedder = VoyageAIEmbeddings(model="voyage-code-2")
+    vectorstore = Chroma.from_texts(
+        texts=[f["text"] for f in functions],
+        metadatas=[f["metadata"] for f in functions],
+        embedding=embedder,
+        persist_directory=".codereview_index"
+    )
+    return vectorstore
+
+# On review: retrieve relevant context
+def context_aware_review(source: str, vectorstore) -> ReviewResult:
+    # Find similar functions in codebase
+    related = vectorstore.similarity_search(source, k=3)
+    context = "\n\n".join([r.page_content for r in related])
+
+    prompt = f"""Review this function. For consistency issues,
+reference how similar functions are written in this codebase:
+
+CODEBASE PATTERNS:
+{context}
+
+FUNCTION TO REVIEW:
+{source}"""
+    return llm.invoke(prompt)</pre>
+    </div>
+    <div class="card">
+      <h3>Evaluation Harness (Your Intel Edge)</h3>
+      <pre">## Build this BEFORE writing the LLM prompts (TDD for AI)
+
+EVAL_CASES = [
+    {
+        "code": "def divide(a, b): return a / b",
+        "expected_issues": ["division by zero", "no type hints"],
+        "expected_severity": "high"
+    },
+    {
+        "code": "password = 'admin123'",
+        "expected_issues": ["hardcoded credential"],
+        "expected_severity": "high"
+    },
+    # 48 more cases...
+]
+
+def evaluate_reviewer(eval_cases: list) -> dict:
+    results = []
+    for case in eval_cases:
+        output = review_api(case["code"])
+        found_issues = [i.description.lower() for i in output.issues]
+
+        # Precision: of issues flagged, how many are correct?
+        true_pos = sum(1 for exp in case["expected_issues"]
+                       if any(exp in found for found in found_issues))
+        precision = true_pos / max(len(found_issues), 1)
+        recall = true_pos / len(case["expected_issues"])
+        results.append({"precision": precision, "recall": recall,
+                        "latency_ms": output.latency_ms})
+
+    return {
+        "precision": sum(r["precision"] for r in results) / len(results),
+        "recall":    sum(r["recall"]    for r in results) / len(results),
+        "p95_latency": sorted(r["latency_ms"] for r in results)[int(.95*len(results))]
+    }
+# Show these numbers in your README. They're rare.</pre>
+    </div>
+    <div class="card card-wide">
+      <h3>VS Code Extension (TypeScript) — Minimal Viable</h3>
+      <pre">// extension.ts — registers a "Review This Function" command
+import * as vscode from 'vscode';
+import fetch from 'node-fetch';
+
+export function activate(context: vscode.ExtensionContext) {
+    const disposable = vscode.commands.registerCommand(
+        'codeReviewer.reviewSelection',
+        async () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+
+            const selection = editor.selection;
+            const code = editor.document.getText(selection);
+
+            vscode.window.withProgress(
+                {location: vscode.ProgressLocation.Notification,
+                 title: "🤖 Reviewing code...", cancellable: false},
+                async () => {
+                    const response = await fetch('http://localhost:8000/review', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({code, language: 'python'})
+                    });
+                    const result = await response.json();
+
+                    // Show results in a webview panel
+                    const panel = vscode.window.createWebviewPanel(
+                        'codeReview', 'Code Review', vscode.ViewColumn.Beside,
+                        {enableScripts: true}
+                    );
+                    panel.webview.html = renderReviewHTML(result);
+                }
+            );
+        }
+    );
+    context.subscriptions.push(disposable);
+}
+// package.json: add "contributes.commands" entry
+// Ship on VS Code Marketplace — free, visible to recruiters</pre>
+    </div>
+    <div class="card">
+      <h3>Demo Strategy (Week 22)</h3>
+      <ul>
+        <li><strong>Loom video (3 min):</strong> Show it reviewing real open-source code with actual issues. Don't use toy examples.</li>
+        <li><strong>README metrics:</strong> Precision/recall on your eval set. P95 latency. Cost per review.</li>
+        <li><strong>Architecture diagram:</strong> CLI → FastAPI → tree-sitter → voyage embeddings → Claude → Pydantic output</li>
+        <li><strong>HuggingFace Space:</strong> Gradio UI wrapping the same API — free, discoverable, shows reach</li>
+        <li><strong>PyPI publish:</strong> <code>pip install yourname-code-reviewer</code> — instant credibility signal</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Interview Pitch for This Project</h3>
+      <div class="cheat">
+        <em>"I built a context-aware code reviewer that parses codebases with tree-sitter, indexes functions using code-specific embeddings, and retrieves relevant codebase patterns before generating reviews — so it catches consistency issues that file-by-file tools miss. I built a 50-case eval harness first — TDD for the LLM — and iterated on prompts until precision hit 87% and recall 83%. It ships as both a CLI and a VS Code extension, both pointing to the same FastAPI backend."</em><br><br>
+        That's 45 seconds. Every sentence has a technical decision with a reason. This is how senior engineers talk about their work.
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://tree-sitter.github.io/tree-sitter/" target="_blank">tree-sitter</a>
+    <a class="res-link" href="https://docs.voyageai.com/docs/embeddings" target="_blank">Voyage AI Code Embeddings</a>
+    <a class="res-link" href="https://click.palletsprojects.com/" target="_blank">Click (CLI)</a>
+    <a class="res-link" href="https://rich.readthedocs.io/en/stable/" target="_blank">Rich (terminal UI)</a>
+    <a class="res-link" href="https://code.visualstudio.com/api/" target="_blank">VS Code Extension API</a>
+    <a class="res-link" href="https://pypi.org/manage/account/" target="_blank">Publish to PyPI</a>
+  </div>
+</section>
+
+
+<!-- ═══════════ VISIBILITY STRATEGY ═══════════ -->
+
+<!-- LINKEDIN -->
+<section class="section theme-career" id="linkedin-strategy">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(0,119,181,.15)">💼</div>
+    <h2>LinkedIn Playbook</h2>
+    <span class="week-badge">Week 2 → Month 6</span>
+  </div>
+  <div class="callout"><strong>The rule:</strong> Don't post to build a following. Post so that when a recruiter Googles your name after seeing your resume, they find evidence that you're actually doing the work. One post/week is enough if the content is real.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Post Types That Actually Work</h3>
+      <table>
+        <tr><th>Type</th><th>Format</th><th>When</th><th>Example hook</th></tr>
+        <tr><td>Build log</td><td>3-5 sentences + screenshot/GIF</td><td>Weekly — after each project milestone</td><td>"Shipped my RAG app today. RAGAS faithfulness score: 0.91. Here's what actually took the longest..."</td></tr>
+        <tr><td>Lesson learned</td><td>Short paragraph + code snippet</td><td>When something surprised you</td><td>"LLMs are way better code reviewers when you give them your codebase context, not just the file. Here's how I did it with embeddings..."</td></tr>
+        <tr><td>Comparison</td><td>Table or 2-column breakdown</td><td>After testing 2 things</td><td>"Tested GPT-4o vs Claude Sonnet on code review tasks. Results surprised me..."</td></tr>
+        <tr><td>OSS contribution</td><td>Link to merged PR + 1 sentence context</td><td>Each merged PR</td><td>"Got my first PR merged into LangChain. Added X. Here's what I learned from the review process..."</td></tr>
+        <tr><td>Resource share</td><td>Link + your 3-sentence take</td><td>When something is genuinely useful</td><td>"The best 2-hour investment for understanding how transformers actually work..."</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Post Formula That Gets Engagement</h3>
+      <div class="cheat">
+        <strong>Line 1 (hook):</strong> Specific result or surprising finding. Not "I learned about RAG today." → "My RAG app was giving wrong answers 40% of the time. Here's the one change that fixed it."<br><br>
+        <strong>Lines 2-4 (substance):</strong> What you actually did, specific technical detail, a number or metric.<br><br>
+        <strong>Line 5 (takeaway):</strong> One sentence that someone can use without reading the whole post.<br><br>
+        <strong>Call out your Intel background early:</strong> "Coming from hardware validation, building LLM eval pipelines felt familiar — define expected behaviour, measure deviation, automate." This makes you memorable.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Phase-by-Phase Posting Schedule</h3>
+      <table>
+        <tr><th>Month</th><th>What to post</th></tr>
+        <tr><td>Month 1</td><td>Learning log: 3Blue1Brown → Karpathy → "built my first streaming chatbot." Show the live URL.</td></tr>
+        <tr><td>Month 2</td><td>RAG project: what chunking strategy you chose and why. RAGAS score. Screenshots.</td></tr>
+        <tr><td>Month 3</td><td>OSS PR #1 merged. What the codebase taught you. Link.</td></tr>
+        <tr><td>Month 4</td><td>Test generator agent: Loom of it opening a real GitHub PR. This post will get shares.</td></tr>
+        <tr><td>Month 5</td><td>Capstone: architecture post. What tree-sitter does and why it's better than ast for this. Eval metrics.</td></tr>
+        <tr><td>Month 6</td><td>"Open to opportunities" — but lead with the work, not the ask. Link to HF Space + GitHub.</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Connection Strategy</h3>
+      <ul>
+        <li><strong>Who to connect with:</strong> AI engineers at Sarvam, Krutrim, Portkey, Glean India. Not just recruiters — the engineers. They refer people.</li>
+        <li><strong>Message template:</strong> "Hey [name], I saw your post about [specific thing]. I'm building [X] and ran into [Y] — your experience with [Z] seems relevant. Would you be open to a 15-min chat?" — specific, not generic.</li>
+        <li><strong>Don't:</strong> Connect and immediately ask for a job. Connect, comment genuinely on 2-3 posts, then message.</li>
+        <li><strong>Target 5 new connections/week</strong> from Week 6 onwards — engineers, not just recruiters.</li>
+        <li><strong>Comment meaningfully</strong> on posts by Sarvam/Krutrim/Portkey engineers — adds you to their network's feed</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Profile Setup (Week 2)</h3>
+      <ul>
+        <li><strong>Headline:</strong> "AI / LLM Engineer | Building GenAI apps | Intel → AI" — not "Actively seeking opportunities"</li>
+        <li><strong>About:</strong> 3 sentences: what you're building, your Intel background angle, what you're looking for</li>
+        <li><strong>Featured:</strong> Pin your best project (the live URL + a GIF of it working)</li>
+        <li><strong>Skills:</strong> Python, LangChain, RAG, FastAPI, LLM APIs, PyTorch — recruiter search terms</li>
+        <li><strong>Open to Work:</strong> Turn ON but set to "recruiters only" — visible to recruiters but not your Intel colleagues</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- OSS GUIDE -->
+<section class="section theme-career" id="oss-guide">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(0,212,170,.15)">🔧</div>
+    <h2>OSS Contribution Guide</h2>
+    <span class="week-badge">Weeks 10, 16, 21</span>
+  </div>
+  <div class="callout"><strong>Why it works:</strong> A merged PR into LangChain or LlamaIndex is worth more than 10 solo projects. It proves you can read and contribute to production codebases built by teams — which is literally what the job is.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Target Repos by Priority</h3>
+      <table>
+        <tr><th>Repo</th><th>Why it matters</th><th>Good first issues</th></tr>
+        <tr><td><a href="https://github.com/langchain-ai/langchain" target="_blank" style="color:var(--accent)">LangChain</a></td><td>Every AI team uses it. Recognisable name.</td><td>Docs, test coverage, minor bugs</td></tr>
+        <tr><td><a href="https://github.com/explodinggradients/ragas" target="_blank" style="color:var(--accent)">RAGAS</a></td><td>Niche but used by serious RAG teams. Smaller community = PR reviewed faster.</td><td>New metrics, docs, examples</td></tr>
+        <tr><td><a href="https://github.com/run-llama/llama_index" target="_blank" style="color:var(--accent)">LlamaIndex</a></td><td>Second most used RAG framework.</td><td>Data loaders, retrievers, docs</td></tr>
+        <tr><td><a href="https://github.com/BerriAI/litellm" target="_blank" style="color:var(--accent)">LiteLLM</a></td><td>Growing fast. Smaller team = more visible contributions.</td><td>New provider integrations, tests</td></tr>
+        <tr><td><a href="https://github.com/langchain-ai/langgraph" target="_blank" style="color:var(--accent)">LangGraph</a></td><td>Agents are hot. LangGraph is the tool. Early contributors are visible.</td><td>Examples, tutorials, bug fixes</td></tr>
+        <tr><td><a href="https://github.com/promptfoo/promptfoo" target="_blank" style="color:var(--accent)">Promptfoo</a></td><td>LLM eval tooling is underdeveloped. Good space.</td><td>Providers, test cases, docs</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>How to Find Good Issues</h3>
+      <pre">## Step 1: Filter for beginner-friendly
+github.com/langchain-ai/langchain/issues?q=is:open+label:"good first issue"
+github.com/explodinggradients/ragas/issues?q=is:open+label:"help wanted"
+
+## Step 2: Find issues in your area of work
+# Search within issues (GitHub):
+# "documentation" — fix docs for concepts you just learned
+# "test" — add test coverage (your Intel background = strength)
+# "example" — add a notebook or example script
+# "bug" — small, well-defined, clear reproduction steps
+
+## Step 3: Read before commenting
+# Read the full issue, read the linked code
+# Understand what's being asked before claiming it
+# Post: "I'd like to work on this. I'm thinking [approach]."
+# Wait for maintainer to confirm — avoids duplicate work
+
+## Tool: goodfirstissue.dev/language/python
+## Aggregates good-first-issues across all repos</pre>
+    </div>
+    <div class="card">
+      <h3>PR Etiquette</h3>
+      <ul>
+        <li><strong>Before starting:</strong> Fork, clone, read CONTRIBUTING.md, set up dev environment, run existing tests.</li>
+        <li><strong>Scope:</strong> One PR = one thing. Don't "while I was here" fix unrelated things.</li>
+        <li><strong>Tests first:</strong> Add tests for your change — especially easy for you given Intel background. Maintainers love this.</li>
+        <li><strong>PR description:</strong> What problem does this solve? What's your approach? Any tradeoffs?</li>
+        <li><strong>Small is better:</strong> A 50-line PR that merges in 2 days > a 500-line PR that sits for months.</li>
+        <li><strong>After review:</strong> Respond within 24 hours. Don't disappear. Argue if you disagree — but with reasons.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Contribution Types by Skill Level</h3>
+      <div class="cheat">
+        <strong>Week 10 (first PR) — Start here:</strong><br>
+        → Fix a typo or unclear sentence in docs<br>
+        → Add a docstring to an undocumented function<br>
+        → Add a test case to existing test file<br><br>
+        <strong>Week 16 (second PR) — Go deeper:</strong><br>
+        → Add a code example to the cookbook/examples<br>
+        → Fix a reported bug (with test to prevent regression)<br>
+        → Improve error messages to be more helpful<br><br>
+        <strong>Week 21 (third PR) — Show real capability:</strong><br>
+        → Add a new integration (e.g., new embedding provider)<br>
+        → Add a new eval metric to RAGAS<br>
+        → Improve retrieval quality in a specific scenario
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://goodfirstissue.dev/language/python" target="_blank">Good First Issue (Python)</a>
+    <a class="res-link" href="https://github.com/langchain-ai/langchain/issues?q=is%3Aopen+label%3A%22good+first+issue%22" target="_blank">LangChain good-first-issues</a>
+    <a class="res-link" href="https://github.com/explodinggradients/ragas/issues" target="_blank">RAGAS issues</a>
+    <a class="res-link" href="https://github.com/run-llama/llama_index/issues?q=is%3Aopen+label%3A%22good+first+issue%22" target="_blank">LlamaIndex good-first-issues</a>
+  </div>
+</section>
+
+<!-- DISCORD -->
+<section class="section theme-career" id="discord-hubs">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(88,101,242,.15)">💬</div>
+    <h2>Discord Servers</h2>
+    <span class="week-badge">Week 1 onwards</span>
+  </div>
+  <div class="callout"><strong>Strategy:</strong> Join 3-4 max. Don't lurk everywhere — be genuinely useful in a few. Answering one good question publicly is worth 100 lurked conversations.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Priority Servers</h3>
+      <table>
+        <tr><th>Server</th><th>Why Join</th><th>Best Channels</th><th>Link</th></tr>
+        <tr><td>LangChain</td><td>Largest GenAI dev community. Ask questions, help others, get noticed.</td><td>#support, #share-your-work</td><td><a href="https://discord.gg/langchain" target="_blank" style="color:var(--accent)">discord.gg/langchain</a></td></tr>
+        <tr><td>Hugging Face</td><td>Model releases, paper discussions, career opportunities posted here first.</td><td>#announcements, #ml-discussions</td><td><a href="https://discord.gg/huggingface" target="_blank" style="color:var(--accent)">discord.gg/huggingface</a></td></tr>
+        <tr><td>Ollama</td><td>Local LLM community. Good for understanding model internals.</td><td>#general, #show-and-tell</td><td><a href="https://discord.gg/ollama" target="_blank" style="color:var(--accent)">discord.gg/ollama</a></td></tr>
+        <tr><td>Latent Space</td><td>AI engineer community (the podcast community). High quality discussion, senior people.</td><td>#general, #papers</td><td><a href="https://discord.gg/latenspacepod" target="_blank" style="color:var(--accent)">Latent Space Discord</a></td></tr>
+        <tr><td>LlamaIndex</td><td>Deep RAG technical discussions. Maintainers are active here.</td><td>#support, #show-and-tell</td><td><a href="https://discord.gg/llamaindex" target="_blank" style="color:var(--accent)">discord.gg/llamaindex</a></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>How to Behave in Discord</h3>
+      <div class="cheat">
+        <strong>Do:</strong><br>
+        → Answer questions you actually know the answer to<br>
+        → Share projects in #show-and-tell with context (what it does + link)<br>
+        → Ask specific questions with code snippets and error messages<br>
+        → Thank people by name when they help — builds memory<br><br>
+        <strong>Don't:</strong><br>
+        → Post "I'm looking for a job" in technical channels<br>
+        → Ask questions answered in the docs (check first)<br>
+        → Post the same thing in 5 channels<br>
+        → Disappear after getting help<br><br>
+        <strong>Timing:</strong> 10 minutes/day. Check during lunch. Don't let it become a productivity sink.
+      </div>
+    </div>
+    <div class="card">
+      <h3>India-Specific Communities</h3>
+      <ul>
+        <li><strong>AI/ML India (LinkedIn group):</strong> Large group, good for networking with Indian AI engineers</li>
+        <li><strong>TFUG Bengaluru:</strong> TensorFlow User Group — monthly meetups, Google engineers, networking</li>
+        <li><strong>PyData Bengaluru:</strong> Data + ML community, regular meetups in Bengaluru</li>
+        <li><strong>IndiaAI community:</strong> Government-backed initiative, good for understanding India's AI landscape</li>
+        <li><strong>Sarvam AI Discord/Community:</strong> Follow Sarvam's social — they actively engage with their community</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- HACKATHONS -->
+<section class="section theme-career" id="hackathons">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,107,107,.15)">🏆</div>
+    <h2>Hackathons</h2>
+    <span class="week-badge">Months 3–5</span>
+  </div>
+  <div class="callout"><strong>Why hackathons:</strong> A podium finish or a notable submission is a LinkedIn post that writes itself, a resume line that stands out, and proof you can ship under pressure. Don't aim to win — aim to ship something real in 24 hours.</div>
+  <div class="cards">
+    <div class="card">
+      <h3>Target Hackathons (Online — No Travel Required)</h3>
+      <table>
+        <tr><th>Hackathon</th><th>Timing</th><th>Prize/Benefit</th><th>Link</th></tr>
+        <tr><td>Anthropic Hackathon</td><td>Quarterly (watch Claude announcements)</td><td>Claude credits + cash + visibility</td><td><a href="https://www.anthropic.com/" target="_blank" style="color:var(--accent)">anthropic.com</a></td></tr>
+        <tr><td>Llama Hacks (Meta)</td><td>Periodic — watch Meta AI blog</td><td>GPU credits + prizes + Meta recruiter attention</td><td><a href="https://ai.meta.com/llama/" target="_blank" style="color:var(--accent)">ai.meta.com/llama</a></td></tr>
+        <tr><td>HuggingFace Community Events</td><td>Monthly sprints + hackathons</td><td>HF swag, visibility on leaderboard</td><td><a href="https://huggingface.co/events" target="_blank" style="color:var(--accent)">huggingface.co/events</a></td></tr>
+        <tr><td>Devpost AI Track</td><td>Ongoing — multiple events</td><td>Cash prizes, sponsor attention</td><td><a href="https://devpost.com/hackathons?themes[]=Artificial%20Intelligence" target="_blank" style="color:var(--accent)">devpost.com</a></td></tr>
+        <tr><td>Lablab.ai</td><td>Weekly online AI hackathons</td><td>Portfolio piece, community, low pressure</td><td><a href="https://lablab.ai/" target="_blank" style="color:var(--accent)">lablab.ai</a></td></tr>
+        <tr><td>Kaggle LLM Competitions</td><td>Ongoing</td><td>Top 20% = resume line + Kaggle medal</td><td><a href="https://www.kaggle.com/competitions?listOption=active" target="_blank" style="color:var(--accent)">kaggle.com/competitions</a></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Hackathon Playbook</h3>
+      <div class="cheat">
+        <strong>Pick the right problem (first 2 hours):</strong><br>
+        → Scope ruthlessly — something you can ship in 24-48 hours<br>
+        → Use what you already know — not a chance to learn a new framework<br>
+        → Add a twist — your eval harness approach, federated angle, Intel angle<br><br>
+        <strong>Build order:</strong><br>
+        1. Working demo first (ugly but functional by hour 8)<br>
+        2. Polish + edge cases (hour 8-20)<br>
+        3. Demo video + README + submission (hour 20-24)<br><br>
+        <strong>Submission must-haves:</strong><br>
+        → 2-min Loom demo — judges watch video, not code<br>
+        → One sentence value prop in the title<br>
+        → Architecture diagram<br>
+        → Live URL if possible
+      </div>
+    </div>
+    <div class="card">
+      <h3>Best Timing</h3>
+      <ul>
+        <li><strong>Month 3:</strong> First hackathon — Lablab.ai. Low pressure, online, good for portfolio piece. Use your RAG skills.</li>
+        <li><strong>Month 4:</strong> HuggingFace sprint. You'll have fine-tuning knowledge by then — useful for model-centric events.</li>
+        <li><strong>Month 5:</strong> Anthropic or Llama hack if they run one — these are the marquee ones. You'll be ready by then.</li>
+        <li><strong>Don't:</strong> Enter a hackathon in Month 1-2 — you want to show up with real skills, not waste a weekend learning basics under pressure.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- GITHUB PROFILE -->
+<section class="section theme-career" id="github-profile">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(30,215,96,.15)">📦</div>
+    <h2>GitHub Profile Strategy</h2>
+    <span class="week-badge">Week 1 onwards</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>Profile README Setup</h3>
+      <pre">## Create repo: username/username (special repo = profile README)
+
+<!-- In README.md -->
+# Sushanth Kulkarni — AI / LLM Engineer
+
+Building GenAI applications: RAG systems, AI agents,
+and developer tooling with LLMs.
+
+## 🔨 Currently Building
+- **AI Code Reviewer** — tree-sitter + voyage-code-2 + Claude Sonnet
+- **Document Q&A** — RAGAS score: 0.91 faithfulness
+
+## 📌 Featured Projects
+| Project | Stack | Live |
+|---------|-------|------|
+| AI Coding Assistant | LangGraph + Claude + FastAPI | [Demo](url) |
+| Document Q&A RAG | LangChain + Pinecone + RAGAS | [Demo](url) |
+| Test Generator Agent | LangGraph + PyGitHub | [Repo](url) |
+
+## 📊 GitHub Stats
+![stats](https://github-readme-stats.vercel.app/api?username=YOUR_USERNAME)
+
+## 📫 Reach me
+[LinkedIn](url) · [HuggingFace](url)</pre>
+    </div>
+    <div class="card">
+      <h3>Every Repo Must Have</h3>
+      <ul>
+        <li><strong>README with:</strong> What it does (1 line), why it's interesting, architecture diagram, install instructions, live demo link or GIF</li>
+        <li><strong>Eval metrics:</strong> RAGAS scores, precision/recall for the coding assistant, latency benchmarks — numbers in the README separate you from tutorial-followers</li>
+        <li><strong>Good commit messages:</strong> "feat: add HyDE retrieval with 15% recall improvement" not "update stuff"</li>
+        <li><strong>Requirements.txt or pyproject.toml:</strong> Must be installable in one command</li>
+        <li><strong>Architecture diagram:</strong> Even a simple ASCII diagram is better than none</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Green Commit Graph Strategy</h3>
+      <div class="cheat">
+        The commit graph is read by recruiters as a proxy for consistency.<br><br>
+        <strong>Daily commits (easy to maintain):</strong><br>
+        → Even small things — add a test, fix a typo, update a README<br>
+        → Push DSA solutions daily to a LeetCode repo<br>
+        → Push learning notes as Markdown files<br><br>
+        <strong>Pinned repos (6 max):</strong><br>
+        1. AI Coding Assistant (capstone)<br>
+        2. Document Q&A RAG<br>
+        3. Test Generator Agent<br>
+        4. Multi-turn Chatbot<br>
+        5. Your federated learning project (already built)<br>
+        6. LeetCode solutions (shows consistency)<br><br>
+        <em>Don't pin old college projects or tutorials.</em>
+      </div>
+    </div>
+    <div class="card">
+      <h3>HuggingFace Profile</h3>
+      <ul>
+        <li><strong>Publish your fine-tuned model</strong> (Week 14) — even a small LoRA adapter. Models with downloads show up in search.</li>
+        <li><strong>Publish a Space</strong> (Week 21) — Gradio demo of your coding assistant. Free GPU compute. Discoverable.</li>
+        <li><strong>Write a Model Card:</strong> What the model does, how it was trained, eval metrics, limitations. Shows ML maturity.</li>
+        <li><strong>Follow the ecosystem:</strong> Follow LangChain, Anthropic, Mistral AI on HF — their releases come here first.</li>
+        <li><strong>Link HF profile</strong> in your LinkedIn and GitHub README.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://github.com/othneildrew/Best-README-Template" target="_blank">README Template</a>
+    <a class="res-link" href="https://github.com/anuraghazra/github-readme-stats" target="_blank">GitHub Stats Widget</a>
+    <a class="res-link" href="https://huggingface.co/docs/hub/spaces" target="_blank">HuggingFace Spaces</a>
+    <a class="res-link" href="https://huggingface.co/docs/hub/model-cards" target="_blank">Model Cards Guide</a>
+    <a class="res-link" href="https://lablab.ai/" target="_blank">Lablab.ai Hackathons</a>
+  </div>
+</section>
+
+<!-- ═══════════ AI INTERVIEW QUESTIONS ═══════════ -->
+<section class="section theme-interview" id="ai-interviews">
+  <div class="section-header">
+    <div class="section-icon">🎯</div>
+    <h2>AI / GenAI Interview Questions</h2>
+    <span class="week-badge">Months 5–6</span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>LLM Fundamentals</h3>
+      <ul>
+        <li>Explain attention mechanism. Why does it work better than RNNs?</li>
+        <li>What is a token? How does tokenization affect cost?</li>
+        <li>What is temperature? Top-p? When do you set temperature to 0?</li>
+        <li>Why do LLMs hallucinate? What are mitigation strategies?</li>
+        <li>What is the difference between few-shot and fine-tuning?</li>
+        <li>Explain RLHF — how is it used to align LLMs?</li>
+        <li>What is a KV-cache and why does it matter for inference cost?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>RAG & Retrieval</h3>
+      <ul>
+        <li>Walk me through a complete RAG pipeline.</li>
+        <li>What chunking strategy would you use for code? Why?</li>
+        <li>What is HyDE and when would you use it?</li>
+        <li>Explain the difference between BM25 and semantic search.</li>
+        <li>How do you evaluate a RAG system? What metrics matter?</li>
+        <li>What is a reranker? How does it differ from an embedding model?</li>
+        <li>When would you choose pgvector over Pinecone?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Agents & Production</h3>
+      <ul>
+        <li>What is the ReAct pattern? How does it work?</li>
+        <li>When would you use LangGraph over a simple agent?</li>
+        <li>How do you prevent an agent from running indefinitely?</li>
+        <li>Explain human-in-the-loop. Why is it important for production agents?</li>
+        <li>How would you reduce LLM API costs in a high-traffic app?</li>
+        <li>What is semantic caching? How does it work?</li>
+        <li>How do you monitor an LLM app in production?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Fine-tuning & Models</h3>
+      <ul>
+        <li>When would you fine-tune instead of using RAG?</li>
+        <li>Explain LoRA. Why is it more efficient than full fine-tuning?</li>
+        <li>What is QLoRA? Why does it matter for resource-constrained training?</li>
+        <li>How would you prepare training data for instruction fine-tuning?</li>
+        <li>What is catastrophic forgetting and how do you mitigate it?</li>
+        <li>How do you evaluate a fine-tuned model?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>System Design: Design a RAG System</h3>
+      <pre">// 45-min interview answer structure:
+
+1. Clarify requirements (5 min)
+   - Scale: 10k vs 10M documents?
+   - Latency: real-time vs batch?
+   - Query types: factual, analytical, conversational?
+
+2. High-level architecture (10 min)
+   - Ingestion pipeline: doc loader → chunker → embedder → vector store
+   - Query pipeline: embed → retrieve → rerank → generate → respond
+
+3. Deep dive components (20 min)
+   - Chunking strategy for content type
+   - Embedding model choice + justification
+   - Retrieval: semantic + hybrid + reranking
+   - LLM choice + prompt design
+   - Caching strategy
+
+4. Production concerns (10 min)
+   - Evaluation: RAGAS metrics + human feedback
+   - Monitoring: LangSmith, latency, cost
+   - Failure modes + fallbacks</pre>
+    </div>
+    <div class="card">
+      <h3>Your Federated Learning Edge</h3>
+      <div class="callout">
+        <strong>Tell this story when asked about your background:</strong><br><br>
+        "At Intel I worked on system integration and validation — building automated test pipelines to catch regressions across hardware-software stacks. In my projects, I implemented federated learning, which gave me deep intuition for distributed training, privacy-preserving ML, and why model evaluation under distribution shift matters.<br><br>
+        When I look at LLM evaluation — RAGAS metrics, faithfulness testing, systematic red-teaming — it's the same mental model I applied at Intel: define expected behaviour, measure deviation, automate the feedback loop. I think that systematic testing instinct is rare in AI engineering, and it's why I lean toward building eval harnesses as a first-class concern, not an afterthought."
+      </div>
+    </div>
+  </div>
+  <div class="res-links">
+    <a class="res-link" href="https://www.turing.com/interview-questions/machine-learning" target="_blank">ML Interview Questions (Turing)</a>
+    <a class="res-link" href="https://www.educative.io/courses/machine-learning-system-design" target="_blank">ML System Design Course</a>
+    <a class="res-link" href="https://www.pramp.com/" target="_blank">Pramp (free mocks)</a>
+    <a class="res-link" href="https://interviewing.io/" target="_blank">Interviewing.io</a>
+    <a class="res-link" href="https://www.tryexponent.com/" target="_blank">Exponent (system design)</a>
+  </div>
+</section>
+
+<!-- ═══════════ CHEAT SHEETS ═══════════ -->
+<section class="section" id="cheatsheet">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,209,102,.15)">⚡</div>
+    <h2>All Cheat Sheets</h2>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>LLM API Quick Ref</h3>
+      <div class="cheat">
+        <strong>GPT-4o:</strong> $2.50/1M input | 128k ctx | best general<br>
+        <strong>Claude Sonnet:</strong> $3.00/1M | 200k ctx | best for code/docs<br>
+        <strong>GPT-4o-mini:</strong> $0.15/1M | 128k ctx | production scale<br>
+        <strong>Gemini 1.5 Pro:</strong> $1.25/1M | 1M ctx | massive context<br>
+        <strong>temp=0:</strong> deterministic | <strong>temp=1:</strong> creative<br>
+        <strong>top_p=0.9:</strong> diverse | <strong>top_k=50:</strong> constrained
+      </div>
+    </div>
+    <div class="card">
+      <h3>RAG Pipeline Quick Ref</h3>
+      <div class="cheat">
+        Chunk size: <strong>1000 tokens</strong> overlap: <strong>200</strong> (baseline)<br>
+        Embedding: <strong>text-embedding-3-small</strong> → 1536 dims<br>
+        Code embedding: <strong>voyage-code-2</strong> (better for capstone)<br>
+        Retrieve: <strong>k=20</strong> → rerank → <strong>top 3</strong><br>
+        Eval: Faithfulness, Answer Relevancy, Context Recall<br>
+        Hybrid search: BM25 (0.4) + Semantic (0.6) weights
+      </div>
+    </div>
+    <div class="card">
+      <h3>Agent Cheat Sheet</h3>
+      <div class="cheat">
+        <strong>Chain:</strong> fixed steps, fast, predictable<br>
+        <strong>Agent:</strong> dynamic steps, tool selection, flexible<br>
+        <strong>ReAct:</strong> Thought → Action → Observation loop<br>
+        <strong>LangGraph:</strong> stateful, conditional routing, persistence<br>
+        <strong>Human-in-loop:</strong> interrupt_before=[node] in LangGraph<br>
+        <strong>Max iterations:</strong> always set to prevent infinite loops
+      </div>
+    </div>
+    <div class="card">
+      <h3>Fine-tuning Quick Ref</h3>
+      <div class="cheat">
+        <strong>When:</strong> consistent format/style; not for knowledge<br>
+        <strong>LoRA rank r:</strong> 16 typical | higher = more capacity<br>
+        <strong>QLoRA:</strong> 4-bit base + LoRA = 4× less VRAM<br>
+        <strong>7B model:</strong> ~5GB VRAM (4-bit) — fits on RTX 3080<br>
+        <strong>Min data:</strong> ~500–1000 examples for good fine-tune<br>
+        <strong>Tools:</strong> PEFT + Unsloth (fast) + Axolotl (prod)
+      </div>
+    </div>
+    <div class="card">
+      <h3>AI Interview Must-Knows</h3>
+      <div class="cheat">
+        ✅ Attention mechanism (Q, K, V — intuition level)<br>
+        ✅ Tokenization + context window limits<br>
+        ✅ Why hallucination happens + 3 mitigations<br>
+        ✅ Full RAG pipeline, chunking strategies<br>
+        ✅ HyDE, hybrid search, reranking<br>
+        ✅ ReAct agent loop<br>
+        ✅ LoRA vs QLoRA (when to use each)<br>
+        ✅ RAGAS metrics (faithfulness, relevancy, recall)<br>
+        ✅ Cost optimization (caching, batching, routing)<br>
+        ✅ Design a RAG system in 45 minutes
+      </div>
+    </div>
+    <div class="card">
+      <h3>DSA + Complexity</h3>
+      <div class="cheat">
+        Sliding window / two pointers: <strong>O(n)</strong><br>
+        HashMap: <strong>O(1)</strong> avg | BFS/DFS: <strong>O(V+E)</strong><br>
+        Binary search: <strong>O(log n)</strong> | Sort: <strong>O(n log n)</strong><br>
+        Heap push/pop: <strong>O(log n)</strong> | DP 1D: <strong>O(n)</strong><br>
+        Backtracking: <strong>O(2^n)</strong> | Trie op: <strong>O(m)</strong><br><br>
+        Stuck? → "What data structure fits the access pattern?"<br>
+        Always → clarify, example, brute force, optimise
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.sidebar a[href^="#"]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.2, rootMargin: '-60px 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
