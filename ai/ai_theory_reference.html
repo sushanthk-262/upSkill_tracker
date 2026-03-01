@@ -50,7 +50,8 @@
   .card a:hover{text-decoration:underline;}
   .card-wide{grid-column:span 2;}
 
-  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;font-size:12px;line-height:1.75;font-family:'Fira Code','Cascadia Code',Consolas,monospace;margin:10px 0;}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:0;overflow-x:auto;margin:10px 0;}
+  pre code{display:block;padding:16px 18px;font-size:12px;line-height:1.8;font-family:'Fira Code','Cascadia Code',Consolas,monospace;color:#c9d1d9;white-space:pre;background:transparent;border:none;border-radius:0;}
   code{background:var(--code-bg);border-radius:4px;padding:2px 6px;font-size:12px;color:#79c0ff;font-family:'Fira Code',monospace;}
 
   .res-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
@@ -69,6 +70,12 @@
   th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);}
   td{padding:8px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;}
   tr:hover td{background:rgba(255,255,255,.02);}
+
+  pre code .kw{color:#ff7b72;}   /* keywords */
+  pre code .st{color:#a5d6ff;}   /* strings */
+  pre code .cm{color:#8b949e;font-style:italic;} /* comments */
+  pre code .fn{color:#d2a8ff;}   /* function names */
+  pre code .nm{color:#ffa657;}   /* numbers */
 
   .theme-llm .section-icon{background:rgba(0,212,170,.15);}
   .theme-rag .section-icon{background:rgba(108,99,255,.15);}
@@ -160,7 +167,7 @@
     <div class="card">
       <h3>The Attention Mechanism — Intuition</h3>
       <p>Attention lets every token "look at" every other token when being encoded. It's what makes transformers understand context.</p>
-      <pre>Q = query  (what am I looking for?)
+      <pre><code>Q = query  (what am I looking for?)
 K = key    (what do I contain?)
 V = value  (what do I actually contribute?)
 
@@ -169,12 +176,12 @@ Attention(Q,K,V) = softmax(QK^T / √d_k) × V
 # √d_k = scaling to prevent vanishing gradients
 # softmax → weights sum to 1 (attention distribution)
 # "The cat sat on the mat" — when encoding "sat",
-# attention weight on "cat" is high (who sat?)</pre>
+# attention weight on "cat" is high (who sat?)</code></pre>
       <p><strong>Multi-head:</strong> Run h attention heads in parallel, each learning different relationships (syntax, coreference, semantics). Concatenate results.</p>
     </div>
     <div class="card">
       <h3>Transformer Architecture</h3>
-      <pre>Input Text
+      <pre><code>Input Text
     ↓ Tokenizer
 Token IDs [1, 9453, 281, ...]
     ↓ Embedding layer
@@ -182,12 +189,12 @@ Token Embeddings (d_model dimensions)
     ↓ + Positional Encoding
     ↓ N × Encoder/Decoder Blocks:
        - Multi-Head Self-Attention
-       - Add & Norm (residual)
+       - Add &amp; Norm (residual)
        - Feed Forward (2 linear layers + ReLU)
-       - Add & Norm
+       - Add &amp; Norm
     ↓ Output layer (vocab size logits)
     ↓ Softmax
-Next Token Probabilities</pre>
+Next Token Probabilities</code></pre>
       <ul>
         <li><strong>Encoder-only:</strong> BERT — classification, embeddings</li>
         <li><strong>Decoder-only:</strong> GPT, Llama, Claude — text generation</li>
@@ -196,7 +203,7 @@ Next Token Probabilities</pre>
     </div>
     <div class="card">
       <h3>Tokenization</h3>
-      <pre>## BPE (Byte Pair Encoding) — GPT models
+      <pre><code>## BPE (Byte Pair Encoding) — GPT models
 # Merges frequent character pairs iteratively
 "unhappiness" → ["un", "happ", "iness"]
 # ~100k vocab, subword level
@@ -212,7 +219,7 @@ tokens = enc.encode("Hello World")
 
 # Rule of thumb: 1 token ≈ 0.75 words (English)
 # 1k tokens ≈ 750 words ≈ 1.5 pages
-# GPT-4o context: 128k tokens ≈ 100k words</pre>
+# GPT-4o context: 128k tokens ≈ 100k words</code></pre>
     </div>
     <div class="card">
       <h3>Context Window & Generation</h3>
@@ -269,7 +276,7 @@ tokens = enc.encode("Hello World")
   <div class="cards">
     <div class="card">
       <h3>OpenAI API Cheat Sheet</h3>
-      <pre>from openai import AsyncOpenAI
+      <pre><code>from openai import AsyncOpenAI
 client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 # Basic completion
@@ -290,11 +297,11 @@ async with client.chat.completions.stream(
     messages=[{"role":"user","content":"Tell me a story"}],
 ) as stream:
     async for chunk in stream:
-        print(chunk.choices[0].delta.content, end="", flush=True)</pre>
+        print(chunk.choices[0].delta.content, end="", flush=True)</code></pre>
     </div>
     <div class="card">
       <h3>Anthropic Claude API Cheat Sheet</h3>
-      <pre">import anthropic
+      <pre><code>import anthropic
 client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
 # Basic
@@ -322,11 +329,11 @@ client.messages.create(
     system=[{"type":"text","text":large_context,
              "cache_control":{"type":"ephemeral"}}],
     messages=[...]
-)</pre>
+)</code></pre>
     </div>
     <div class="card">
       <h3>Structured Outputs (JSON mode)</h3>
-      <pre">from pydantic import BaseModel
+      <pre><code>from pydantic import BaseModel
 from openai import OpenAI
 
 client = OpenAI()
@@ -353,11 +360,11 @@ review = client.chat.completions.create(
     model="gpt-4o",
     response_model=CodeReview,
     messages=[{"role":"user","content":f"Review: {code}"}]
-)</pre>
+)</code></pre>
     </div>
     <div class="card">
       <h3>Tool / Function Calling</h3>
-      <pre">tools = [{
+      <pre><code>tools = [{
     "type": "function",
     "function": {
         "name": "run_code",
@@ -386,11 +393,11 @@ if response.choices[0].finish_reason == "tool_calls":
     fn_name = tool_call.function.name
     args = json.loads(tool_call.function.arguments)
     result = run_code(**args)  # Execute it
-    # Append result back to messages and call again</pre>
+    # Append result back to messages and call again</code></pre>
     </div>
     <div class="card">
       <h3>Multi-Provider with LiteLLM</h3>
-      <pre">import litellm
+      <pre><code>import litellm
 
 # Same interface for OpenAI, Anthropic, Gemini, Ollama
 response = litellm.completion(
@@ -407,7 +414,7 @@ response = litellm.completion(
 
 # Cost tracking built-in
 print(litellm.completion_cost(completion_response=response))
-# → 0.0023  (dollars)</pre>
+# → 0.0023  (dollars)</code></pre>
     </div>
     <div class="card">
       <h3>API Comparison Table</h3>
@@ -454,7 +461,7 @@ print(litellm.completion_cost(completion_response=response))
     </div>
     <div class="card">
       <h3>System Prompt Template</h3>
-      <pre">SYSTEM_PROMPT = """
+      <pre><code>SYSTEM_PROMPT = """
 You are an expert {role} with {expertise}.
 
 ## TASK
@@ -480,12 +487,12 @@ Assistant: {example_output}
 
 # Tips:
 # 1. Put most important instructions first AND last
-# 2. Use XML tags to separate sections: <context>, <task>
-# 3. Be explicit about output format — LLMs follow spec</pre>
+# 2. Use XML tags to separate sections: &lt;context&gt;, &lt;task&gt;
+# 3. Be explicit about output format — LLMs follow spec</code></pre>
     </div>
     <div class="card">
       <h3>Chain-of-Thought Prompting</h3>
-      <pre">## Zero-shot CoT (just add this)
+      <pre><code>## Zero-shot CoT (just add this)
 "Let's think step by step."
 "Think through this carefully before answering."
 
@@ -506,36 +513,36 @@ A:"""
  1. List all functions and their purposes
  2. Identify potential edge cases
  3. Check for security issues
- Then provide your structured review."</pre>
+ Then provide your structured review."</code></pre>
     </div>
     <div class="card">
       <h3>XML Tags (Anthropic Best Practice)</h3>
-      <pre">## Claude responds better with XML structure
+      <pre><code>## Claude responds better with XML structure
 messages = [{
     "role": "user",
     "content": """
-<context>
+&lt;context&gt;
 {relevant_background_info}
-</context>
+&lt;/context&gt;
 
-<code>
+&lt;code&gt;
 {code_to_review}
-</code>
+&lt;/code&gt;
 
-<task>
+&lt;task&gt;
 Review the above code for:
 1. Correctness
 2. Performance issues
 3. Security vulnerabilities
-</task>
+&lt;/task&gt;
 
-<output_format>
+&lt;output_format&gt;
 Return a JSON object with keys:
 issues (list), severity (string), score (1-10)
-</output_format>
+&lt;/output_format&gt;
 """
 }]
-# XML tags help Claude parse structure reliably</pre>
+# XML tags help Claude parse structure reliably</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -557,10 +564,10 @@ issues (list), severity (string), score (1-10)
     <div class="card">
       <h3>What Are Embeddings?</h3>
       <p>Dense vector representations of text. Semantically similar text → vectors that are close in high-dimensional space.</p>
-      <pre">from openai import OpenAI
+      <pre><code>from openai import OpenAI
 client = OpenAI()
 
-def embed(text: str) -> list[float]:
+def embed(text: str) -&gt; list[float]:
     response = client.embeddings.create(
         model="text-embedding-3-small",  # 1536 dims
         input=text
@@ -576,7 +583,7 @@ v1 = embed("Python programming")
 v2 = embed("coding in Python")
 v3 = embed("recipe for pasta")
 print(cosine_sim(v1, v2))  # ~0.95 (very similar)
-print(cosine_sim(v1, v3))  # ~0.3  (dissimilar)</pre>
+print(cosine_sim(v1, v3))  # ~0.3  (dissimilar)</code></pre>
     </div>
     <div class="card">
       <h3>Embedding Models Comparison</h3>
@@ -609,7 +616,7 @@ print(cosine_sim(v1, v3))  # ~0.3  (dissimilar)</pre>
   <div class="cards">
     <div class="card">
       <h3>RAG Architecture</h3>
-      <pre">Ingestion (offline):
+      <pre><code>Ingestion (offline):
   Documents → Chunking → Embedding → Vector Store
 
 Query (online):
@@ -635,11 +642,11 @@ def rag_query(question: str, vectorstore, llm):
     Answer:"""
 
     # 3. Generate
-    return llm.invoke(prompt)</pre>
+    return llm.invoke(prompt)</code></pre>
     </div>
     <div class="card">
       <h3>Chunking Strategies</h3>
-      <pre">from langchain_text_splitters import (
+      <pre><code>from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
     MarkdownHeaderTextSplitter
 )
@@ -659,7 +666,7 @@ splitter = SemanticChunker(OpenAIEmbeddings())
 
 # For code (your capstone): split by function/class
 # tree-sitter: extract functions as individual chunks
-# Don't chunk mid-function — loss of context!</pre>
+# Don't chunk mid-function — loss of context!</code></pre>
     </div>
     <div class="card">
       <h3>Advanced RAG Techniques</h3>
@@ -675,7 +682,7 @@ splitter = SemanticChunker(OpenAIEmbeddings())
     </div>
     <div class="card">
       <h3>HyDE — Hypothetical Document Embeddings</h3>
-      <pre">def hyde_retrieval(question: str, vectorstore, llm):
+      <pre><code>def hyde_retrieval(question: str, vectorstore, llm):
     # Step 1: Generate a hypothetical answer
     hypothetical = llm.invoke(
         f"Write a short passage that would answer: {question}"
@@ -690,11 +697,11 @@ splitter = SemanticChunker(OpenAIEmbeddings())
 
 # Why it works: hypothetical answer is in the same
 # semantic space as real documents, even if factually wrong
-# → better retrieval for abstract queries</pre>
+# → better retrieval for abstract queries</code></pre>
     </div>
     <div class="card">
       <h3>Hybrid Search Implementation</h3>
-      <pre">from langchain_community.retrievers import BM25Retriever
+      <pre><code>from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import EnsembleRetriever
 
 # BM25: classic keyword search (TF-IDF variant)
@@ -711,11 +718,11 @@ ensemble = EnsembleRetriever(
 )
 
 results = ensemble.invoke("your query here")
-# Then optionally rerank with Cohere</pre>
+# Then optionally rerank with Cohere</code></pre>
     </div>
     <div class="card">
       <h3>Reranking with Cohere</h3>
-      <pre">import cohere
+      <pre><code>import cohere
 co = cohere.Client(api_key=os.environ["COHERE_API_KEY"])
 
 def rerank(query: str, documents: list[str], top_n=3):
@@ -729,8 +736,8 @@ def rerank(query: str, documents: list[str], top_n=3):
 
 # Pipeline: retrieve k=20, rerank to top 3
 # Much cheaper than embedding 20 docs every time
-# Cross-encoder (reranker) > bi-encoder (embedding)
-# for final scoring — but too slow for first-stage</pre>
+# Cross-encoder (reranker) &gt; bi-encoder (embedding)
+# for final scoring — but too slow for first-stage</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -752,7 +759,7 @@ def rerank(query: str, documents: list[str], top_n=3):
   <div class="cards">
     <div class="card">
       <h3>Chroma (Local — Start Here)</h3>
-      <pre">import chromadb
+      <pre><code>import chromadb
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
@@ -778,11 +785,11 @@ results = vectorstore.similarity_search(
 
 # With scores
 results = vectorstore.similarity_search_with_score("query", k=4)
-# returns: [(Document, 0.23), (Document, 0.45), ...]</pre>
+# returns: [(Document, 0.23), (Document, 0.45), ...]</code></pre>
     </div>
     <div class="card">
       <h3>Pinecone (Cloud — Production)</h3>
-      <pre">from pinecone import Pinecone, ServerlessSpec
+      <pre><code>from pinecone import Pinecone, ServerlessSpec
 
 pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
 
@@ -806,7 +813,7 @@ results = index.query(
     top_k=5,
     include_metadata=True,
     filter={"category": {"$eq": "python"}}  # metadata filter
-)</pre>
+)</code></pre>
     </div>
     <div class="card">
       <h3>Vector DB Comparison</h3>
@@ -850,7 +857,7 @@ results = index.query(
   <div class="cards">
     <div class="card">
       <h3>LCEL — LangChain Expression Language</h3>
-      <pre">from langchain_openai import ChatOpenAI
+      <pre><code>from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -873,11 +880,11 @@ for chunk in chain.stream({"question": "Tell me a story"}):
 # Batch
 results = chain.batch([
     {"question": "Q1"}, {"question": "Q2"}
-])</pre>
+])</code></pre>
     </div>
     <div class="card">
       <h3>Full RAG Chain (LCEL)</h3>
-      <pre">from langchain_core.runnables import RunnablePassthrough
+      <pre><code>from langchain_core.runnables import RunnablePassthrough
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 
@@ -902,17 +909,17 @@ rag_chain = (
     | StrOutputParser()
 )
 
-answer = rag_chain.invoke("What is the refund policy?")</pre>
+answer = rag_chain.invoke("What is the refund policy?")</code></pre>
     </div>
     <div class="card">
       <h3>Memory — Conversation History</h3>
-      <pre">from langchain_core.chat_history import BaseChatMessageHistory
+      <pre><code>from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 store = {}  # {session_id: ChatMessageHistory}
 
-def get_session_history(session_id: str) -> BaseChatMessageHistory:
+def get_session_history(session_id: str) -&gt; BaseChatMessageHistory:
     if session_id not in store:
         store[session_id] = ChatMessageHistory()
     return store[session_id]
@@ -928,11 +935,11 @@ chain_with_history = RunnableWithMessageHistory(
 response = chain_with_history.invoke(
     {"question": "What did I ask before?"},
     config={"configurable": {"session_id": "user123"}}
-)</pre>
+)</code></pre>
     </div>
     <div class="card">
       <h3>LangSmith Observability</h3>
-      <pre">## Enable LangSmith (just set env vars)
+      <pre><code>## Enable LangSmith (just set env vars)
 import os
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "ls_..."
@@ -950,7 +957,7 @@ client.create_feedback(
     key="user-rating",
     score=1.0,   # thumbs up
     comment="Great answer!"
-)</pre>
+)</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -970,7 +977,7 @@ client.create_feedback(
   <div class="cards">
     <div class="card">
       <h3>Core Concepts</h3>
-      <pre">from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+      <pre><code>from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.core import Settings
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
@@ -986,7 +993,7 @@ index = VectorStoreIndex.from_documents(documents)
 query_engine = index.as_query_engine(similarity_top_k=4)
 response = query_engine.query("What is the refund policy?")
 print(response.response)
-print(response.source_nodes)  # retrieved docs with scores</pre>
+print(response.source_nodes)  # retrieved docs with scores</code></pre>
     </div>
     <div class="card">
       <h3>LangChain vs LlamaIndex</h3>
@@ -1016,7 +1023,7 @@ print(response.source_nodes)  # retrieved docs with scores</pre>
   <div class="cards">
     <div class="card">
       <h3>RAGAS — RAG Evaluation Framework</h3>
-      <pre">from ragas import evaluate
+      <pre><code>from ragas import evaluate
 from ragas.metrics import (
     faithfulness,        # Does answer match context?
     answer_relevancy,   # Is answer relevant to question?
@@ -1037,7 +1044,7 @@ results = evaluate(eval_data, metrics=[
     faithfulness, answer_relevancy,
     context_recall, context_precision
 ])
-print(results)  # scores 0-1 for each metric</pre>
+print(results)  # scores 0-1 for each metric</code></pre>
     </div>
     <div class="card">
       <h3>Eval Metrics Reference</h3>
@@ -1054,7 +1061,7 @@ print(results)  # scores 0-1 for each metric</pre>
     </div>
     <div class="card">
       <h3>Promptfoo — Test-Driven Prompts</h3>
-      <pre"># promptfooconfig.yaml
+      <pre><code># promptfooconfig.yaml
 prompts:
   - "Answer this question: {{question}}"
   - "You are an expert assistant. Answer: {{question}}"
@@ -1074,14 +1081,14 @@ tests:
 
 # Run: npx promptfoo@latest eval
 # Compares prompt variants + models in a table
-# Automated regressions when you change prompts</pre>
+# Automated regressions when you change prompts</code></pre>
     </div>
     <div class="card">
       <h3>Build Your Own Eval Harness</h3>
-      <pre">import json
+      <pre><code>import json
 from tqdm import tqdm
 
-def evaluate_coding_assistant(test_cases: list[dict]) -> dict:
+def evaluate_coding_assistant(test_cases: list[dict]) -&gt; dict:
     """
     test_cases: [{"input": code, "expected_issues": [...]}]
     """
@@ -1105,7 +1112,7 @@ def evaluate_coding_assistant(test_cases: list[dict]) -> dict:
         "avg_precision": sum(r["precision"] for r in results)/len(results),
         "avg_recall": sum(r["recall"] for r in results)/len(results),
         "avg_latency": sum(r["latency_ms"] for r in results)/len(results)
-    }</pre>
+    }</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -1126,7 +1133,7 @@ def evaluate_coding_assistant(test_cases: list[dict]) -> dict:
   <div class="cards">
     <div class="card">
       <h3>ReAct Pattern</h3>
-      <pre">## ReAct: Reasoning + Acting loop
+      <pre><code>## ReAct: Reasoning + Acting loop
 # Thought → Action → Observation → Thought → ...
 
 from langchain.agents import create_react_agent, AgentExecutor
@@ -1146,14 +1153,14 @@ llm = ChatOpenAI(model="gpt-4o", temperature=0)
 
 agent = create_react_agent(llm, tools, prompt)
 executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-result = executor.invoke({"input": "What is the latest news on LLMs?"})</pre>
+result = executor.invoke({"input": "What is the latest news on LLMs?"})</code></pre>
     </div>
     <div class="card">
       <h3>Custom Tool Definition</h3>
-      <pre">from langchain_core.tools import tool
+      <pre><code>from langchain_core.tools import tool
 
 @tool
-def run_python_code(code: str) -> str:
+def run_python_code(code: str) -&gt; str:
     """Execute Python code and return the output.
     Use for calculations, data processing, or testing."""
     import subprocess, sys
@@ -1164,13 +1171,13 @@ def run_python_code(code: str) -> str:
     return result.stdout or result.stderr
 
 @tool
-def search_codebase(query: str, top_k: int = 3) -> str:
+def search_codebase(query: str, top_k: int = 3) -&gt; str:
     """Search the indexed codebase for relevant functions/classes."""
     results = codebase_vectorstore.similarity_search(query, k=top_k)
     return "\n\n".join([r.page_content for r in results])
 
 # Register tools with agent
-tools = [run_python_code, search_codebase]</pre>
+tools = [run_python_code, search_codebase]</code></pre>
     </div>
     <div class="card">
       <h3>Agent Failure Modes</h3>
@@ -1215,7 +1222,7 @@ tools = [run_python_code, search_codebase]</pre>
   <div class="cards">
     <div class="card">
       <h3>Core Concepts</h3>
-      <pre">from langgraph.graph import StateGraph, END
+      <pre><code>from langgraph.graph import StateGraph, END
 from typing import TypedDict, Annotated
 import operator
 
@@ -1227,16 +1234,16 @@ class AgentState(TypedDict):
     iteration: int
 
 # 2. Define nodes (functions that transform state)
-def analyze_code(state: AgentState) -> dict:
+def analyze_code(state: AgentState) -&gt; dict:
     issues = llm.invoke(f"Find issues in:\n{state['code']}")
     return {"issues": issues, "iteration": state["iteration"] + 1}
 
-def generate_fix(state: AgentState) -> dict:
+def generate_fix(state: AgentState) -&gt; dict:
     fix = llm.invoke(f"Fix these issues:\n{state['issues']}")
     return {"code": fix}
 
-def should_continue(state: AgentState) -> str:
-    if state["iteration"] >= 3 or not state["issues"]:
+def should_continue(state: AgentState) -&gt; str:
+    if state["iteration"] &gt;= 3 or not state["issues"]:
         return "end"
     return "fix"
 
@@ -1250,11 +1257,11 @@ graph.add_conditional_edges("analyze", should_continue,
 graph.add_edge("fix", "analyze")
 
 app = graph.compile()
-result = app.invoke({"code": my_code, "iteration": 0})</pre>
+result = app.invoke({"code": my_code, "iteration": 0})</code></pre>
     </div>
     <div class="card">
       <h3>Human-in-the-Loop</h3>
-      <pre">from langgraph.checkpoint.memory import MemorySaver
+      <pre><code>from langgraph.checkpoint.memory import MemorySaver
 
 # Persistence between steps
 memory = MemorySaver()
@@ -1278,7 +1285,7 @@ if user_approved == "y":
     final = app.invoke(None, config=thread)
 
 # This pattern = safe AI automation
-# Agent proposes, human approves before irreversible action</pre>
+# Agent proposes, human approves before irreversible action</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -1298,7 +1305,7 @@ if user_approved == "y":
   <div class="cards">
     <div class="card">
       <h3>CrewAI — Role-Based Agents</h3>
-      <pre">from crewai import Agent, Task, Crew
+      <pre><code>from crewai import Agent, Task, Crew
 
 # Define agents with roles
 code_reviewer = Agent(
@@ -1334,7 +1341,7 @@ test_task = Task(
 
 crew = Crew(agents=[code_reviewer, test_writer],
             tasks=[review_task, test_task])
-result = crew.kickoff(inputs={"code": my_code})</pre>
+result = crew.kickoff(inputs={"code": my_code})</code></pre>
     </div>
     <div class="card">
       <h3>Multi-Agent Patterns</h3>
@@ -1419,12 +1426,12 @@ result = crew.kickoff(inputs={"code": my_code})</pre>
     </div>
     <div class="card">
       <h3>LoRA — Low-Rank Adaptation</h3>
-      <pre">## LoRA: instead of updating all weights W,
+      <pre><code>## LoRA: instead of updating all weights W,
 ## add small low-rank matrices ΔW = A × B
 ## Only A and B are trained (much fewer params)
 
 ## Original: W ∈ R^(d×k)   — billions of params
-## LoRA:     A ∈ R^(d×r), B ∈ R^(r×k)  — r << d
+## LoRA:     A ∈ R^(d×r), B ∈ R^(r×k)  — r &lt;&lt; d
 ## r = rank, typically 4-64
 
 from peft import LoraConfig, get_peft_model, TaskType
@@ -1445,11 +1452,11 @@ lora_config = LoraConfig(
 )
 model = get_peft_model(model, lora_config)
 model.print_trainable_parameters()
-# → trainable params: 6.8M (0.08% of total!)</pre>
+# → trainable params: 6.8M (0.08% of total!)</code></pre>
     </div>
     <div class="card">
       <h3>QLoRA — Quantized LoRA</h3>
-      <pre">## QLoRA: 4-bit quantize the base model,
+      <pre><code>## QLoRA: 4-bit quantize the base model,
 ## then apply LoRA on top
 ## Reduces VRAM requirement by ~4x
 ## Train 70B model on single A100!
@@ -1469,11 +1476,11 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto"
 )
 # Then apply LoRA as before
-# For your use case: fine-tune on code review examples</pre>
+# For your use case: fine-tune on code review examples</code></pre>
     </div>
     <div class="card">
       <h3>Training Data Format</h3>
-      <pre">## Instruction-following format (Alpaca style)
+      <pre><code>## Instruction-following format (Alpaca style)
 training_data = [
     {
         "instruction": "Review this Python function for issues",
@@ -1496,7 +1503,7 @@ training_data = [
 # Recommended tools:
 # - Unsloth: 2x faster training, less VRAM
 # - Axolotl: config-based, production-ready
-# - TRL: HuggingFace's training library</pre>
+# - TRL: HuggingFace's training library</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -1517,7 +1524,7 @@ training_data = [
   <div class="cards">
     <div class="card">
       <h3>Ollama — Run Models Locally</h3>
-      <pre">## Install: curl -fsSL https://ollama.com/install.sh | sh
+      <pre><code>## Install: curl -fsSL https://ollama.com/install.sh | sh
 
 # Pull and run
 ollama pull llama3.1          # 8B — needs 8GB RAM
@@ -1538,7 +1545,7 @@ client = OpenAI(base_url="http://localhost:11434/v1",
 response = client.chat.completions.create(
     model="llama3.1",
     messages=[{"role":"user","content":"hello"}]
-)</pre>
+)</code></pre>
     </div>
     <div class="card">
       <h3>When to Use Local vs API</h3>
@@ -1570,7 +1577,7 @@ response = client.chat.completions.create(
   <div class="cards">
     <div class="card">
       <h3>FastAPI + LLM + Streaming</h3>
-      <pre">from fastapi import FastAPI, HTTPException
+      <pre><code>from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -1603,11 +1610,11 @@ async def chat_stream(req: ChatRequest):
         media_type="text/event-stream"
     )
 
-# Run: uvicorn main:app --reload --port 8000</pre>
+# Run: uvicorn main:app --reload --port 8000</code></pre>
     </div>
     <div class="card">
       <h3>Code Review API Endpoint</h3>
-      <pre">class ReviewRequest(BaseModel):
+      <pre><code>class ReviewRequest(BaseModel):
     code: str
     language: str = "python"
     focus: list[str] = ["bugs", "security", "performance"]
@@ -1634,7 +1641,7 @@ Return JSON only matching this schema:
         messages=[{"role":"user","content":prompt}],
         response_format=ReviewResponse
     )
-    return response.choices[0].message.parsed</pre>
+    return response.choices[0].message.parsed</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -1666,14 +1673,14 @@ Return JSON only matching this schema:
     </div>
     <div class="card">
       <h3>Cost Optimization Techniques</h3>
-      <pre">## 1. Prompt Caching (Anthropic)
+      <pre><code>## 1. Prompt Caching (Anthropic)
 # Cache large system prompts (saves 90% of input cost)
 # Cached tokens: $0.30/1M vs $3.00/1M normal
 
 ## 2. Model routing
 # Route simple queries to cheap models
-def route_model(query: str) -> str:
-    if len(query) < 200 and is_simple(query):
+def route_model(query: str) -&gt; str:
+    if len(query) &lt; 200 and is_simple(query):
         return "gpt-4o-mini"   # $0.15/1M
     return "gpt-4o"            # $2.50/1M
 
@@ -1690,7 +1697,7 @@ cache.init(embedding_func=your_embed_fn,
 
 ## 5. Batching (OpenAI Batch API)
 # 50% discount for non-real-time requests
-# Process overnight: evals, fine-tuning data prep</pre>
+# Process overnight: evals, fine-tuning data prep</code></pre>
     </div>
   </div>
   <div class="res-links">
@@ -1753,11 +1760,11 @@ cache.init(embedding_func=your_embed_fn,
   <div class="cards">
     <div class="card">
       <h3>Sliding Window + Two Pointers</h3>
-      <pre">### Longest Substring Without Repeats — O(n)
+      <pre><code>### Longest Substring Without Repeats — O(n)
 def lengthOfLongestSubstring(s):
     seen = {}; left = maxLen = 0
     for right, c in enumerate(s):
-        if c in seen and seen[c] >= left:
+        if c in seen and seen[c] &gt;= left:
             left = seen[c] + 1
         seen[c] = right
         maxLen = max(maxLen, right - left + 1)
@@ -1766,15 +1773,15 @@ def lengthOfLongestSubstring(s):
 ### Two Sum (sorted) — O(n)
 def twoSum(numbers, target):
     l, r = 0, len(numbers) - 1
-    while l < r:
+    while l &lt; r:
         s = numbers[l] + numbers[r]
         if s == target: return [l+1, r+1]
-        elif s < target: l += 1
-        else: r -= 1</pre>
+        elif s &lt; target: l += 1
+        else: r -= 1</code></pre>
     </div>
     <div class="card">
       <h3>BFS + Topological Sort</h3>
-      <pre">from collections import deque, defaultdict
+      <pre><code>from collections import deque, defaultdict
 
 ### Course Schedule (cycle detection)
 def canFinish(n, prerequisites):
@@ -1789,11 +1796,11 @@ def canFinish(n, prerequisites):
         for nb in adj[node]:
             indegree[nb] -= 1
             if indegree[nb] == 0: q.append(nb)
-    return done == n</pre>
+    return done == n</code></pre>
     </div>
     <div class="card">
       <h3>DP Patterns</h3>
-      <pre">### Coin Change — O(amount × coins)
+      <pre><code>### Coin Change — O(amount × coins)
 def coinChange(coins, amount):
     dp = [float('inf')] * (amount + 1)
     dp[0] = 0
@@ -1810,18 +1817,18 @@ def lengthOfLIS(nums):
         pos = bisect.bisect_left(tails, n)
         if pos == len(tails): tails.append(n)
         else: tails[pos] = n
-    return len(tails)</pre>
+    return len(tails)</code></pre>
     </div>
     <div class="card">
       <h3>Heap + Backtracking</h3>
-      <pre">import heapq
+      <pre><code>import heapq
 
 ### Kth Largest — O(n log k)
 def findKthLargest(nums, k):
     heap = nums[:k]
     heapq.heapify(heap)
     for n in nums[k:]:
-        if n > heap[0]: heapq.heapreplace(heap, n)
+        if n &gt; heap[0]: heapq.heapreplace(heap, n)
     return heap[0]
 
 ### Subsets — O(2^n)
@@ -1834,7 +1841,7 @@ def subsets(nums):
             bt(i+1, path)
             path.pop()
     bt(0, [])
-    return result</pre>
+    return result</code></pre>
     </div>
   </div>
 </section>
@@ -1874,7 +1881,7 @@ def subsets(nums):
     </div>
     <div class="card">
       <h3>Core Backend Code</h3>
-      <pre">@app.post("/chat/stream")
+      <pre><code>@app.post("/chat/stream")
 async def chat_stream(req: ChatRequest):
     # Build message history
     history = session_store.get(req.session_id, [])
@@ -1897,12 +1904,12 @@ async def chat_stream(req: ChatRequest):
         session_store[req.session_id] = history[-20:]  # keep last 20
         yield "data: [DONE]\n\n"
 
-    return StreamingResponse(generate(), media_type="text/event-stream")</pre>
+    return StreamingResponse(generate(), media_type="text/event-stream")</code></pre>
     </div>
     <div class="card">
       <h3>React Streaming Consumer</h3>
-      <pre">const sendMessage = async (message) => {
-  setMessages(prev => [...prev, {role:'user', content:message}]);
+      <pre><code>const sendMessage = async (message) =&gt; {
+  setMessages(prev =&gt; [...prev, {role:'user', content:message}]);
   setStreaming(true);
   let buffer = "";
 
@@ -1920,16 +1927,16 @@ async def chat_stream(req: ChatRequest):
     if (done) break;
     const lines = decoder.decode(value).split('\n');
     for (const line of lines) {
-      if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+      if (line.startsWith('data: ') &amp;&amp; line !== 'data: [DONE]') {
         const {text} = JSON.parse(line.slice(6));
         buffer += text;
         setCurrentResponse(buffer);  // live update
       }
     }
   }
-  setMessages(prev => [...prev, {role:'assistant', content:buffer}]);
+  setMessages(prev =&gt; [...prev, {role:'assistant', content:buffer}]);
   setStreaming(false);
-};</pre>
+};</code></pre>
     </div>
     <div class="card">
       <h3>What to Showcase in README</h3>
@@ -1996,7 +2003,7 @@ async def chat_stream(req: ChatRequest):
     </div>
     <div class="card">
       <h3>Ingestion Pipeline</h3>
-      <pre">import fitz  # PyMuPDF
+      <pre><code>import fitz  # PyMuPDF
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from pinecone import Pinecone
@@ -2025,11 +2032,11 @@ async def ingest_pdf(file_bytes: bytes, doc_id: str):
         for i, (chunk, emb) in enumerate(zip(chunks, embeddings))
     ]
     index.upsert(vectors=vectors, namespace=doc_id)
-    return {"chunks": len(chunks)}</pre>
+    return {"chunks": len(chunks)}</code></pre>
     </div>
     <div class="card">
       <h3>Query + Citation Pipeline</h3>
-      <pre">from langchain_core.prompts import ChatPromptTemplate
+      <pre><code>from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
 RAG_PROMPT = ChatPromptTemplate.from_template("""
@@ -2043,7 +2050,7 @@ Context:
 Question: {question}
 """)
 
-async def query_doc(question: str, doc_id: str) -> dict:
+async def query_doc(question: str, doc_id: str) -&gt; dict:
     # Retrieve
     index = Pinecone().Index("rag-docs")
     q_emb = OpenAIEmbeddings().embed_query(question)
@@ -2058,11 +2065,11 @@ async def query_doc(question: str, doc_id: str) -> dict:
     chain = RAG_PROMPT | ChatOpenAI(model="gpt-4o") | StrOutputParser()
     answer = await chain.ainvoke({"context":context,"question":question})
 
-    return {"answer": answer, "sources": chunks}</pre>
+    return {"answer": answer, "sources": chunks}</code></pre>
     </div>
     <div class="card">
       <h3>RAGAS Eval Setup</h3>
-      <pre">## Build a 20-question test set BEFORE building the system
+      <pre><code>## Build a 20-question test set BEFORE building the system
 ## Pick a real document (a paper, a policy doc, a manual)
 ## Write 20 question-answer pairs by hand
 
@@ -2088,7 +2095,7 @@ for item in test_set:
 
 scores = evaluate(Dataset.from_list(results_data),
                   metrics=[faithfulness, answer_relevancy])
-print(scores)  # log to LangSmith for tracking over time</pre>
+print(scores)  # log to LangSmith for tracking over time</code></pre>
     </div>
     <div class="card">
       <h3>What to Showcase + Pitfalls</h3>
@@ -2131,7 +2138,7 @@ print(scores)  # log to LangSmith for tracking over time</pre>
     </div>
     <div class="card">
       <h3>Agent Architecture (LangGraph)</h3>
-      <pre">State: {repo_url, files, parsed_functions, tests, pr_url, iteration}
+      <pre><code>State: {repo_url, files, parsed_functions, tests, pr_url, iteration}
 
 Nodes:
   clone_repo      → git clone, list .py files
@@ -2143,15 +2150,15 @@ Nodes:
 
 Edges:
   clone → parse → generate → validate
-  validate → fix  (if tests fail AND iteration < 3)
+  validate → fix  (if tests fail AND iteration &lt; 3)
   validate → open_pr  (if tests pass)
-  fix → validate  (loop back)</pre>
+  fix → validate  (loop back)</code></pre>
     </div>
     <div class="card">
       <h3>Code Parsing with ast</h3>
-      <pre">import ast, inspect
+      <pre><code>import ast, inspect
 
-def extract_functions(source_code: str) -> list[dict]:
+def extract_functions(source_code: str) -&gt; list[dict]:
     tree = ast.parse(source_code)
     functions = []
     for node in ast.walk(tree):
@@ -2167,18 +2174,18 @@ def extract_functions(source_code: str) -> list[dict]:
                 "annotations": {
                     a.arg: ast.unparse(node.args.annotations[i])
                     for i, a in enumerate(node.args.args)
-                    if i < len(node.args.annotations)
+                    if i &lt; len(node.args.annotations)
                 }
             })
     return functions
 
 # Output feeds directly into test generation prompt
 # LLM gets: function name, args, type hints, docstring, source
-# Much better tests than just giving raw source</pre>
+# Much better tests than just giving raw source</code></pre>
     </div>
     <div class="card">
       <h3>Test Generation Prompt</h3>
-      <pre">TEST_PROMPT = """You are an expert Python test engineer.
+      <pre><code>TEST_PROMPT = """You are an expert Python test engineer.
 
 Generate comprehensive pytest tests for this function:
 
@@ -2203,14 +2210,14 @@ Return ONLY valid pytest code, no explanations.
 """
 
 # Key: give the LLM full context, not just function name
-# Type hints dramatically improve test quality</pre>
+# Type hints dramatically improve test quality</code></pre>
     </div>
     <div class="card">
       <h3>Validation + GitHub PR</h3>
-      <pre">import subprocess, tempfile
+      <pre><code>import subprocess, tempfile
 from github import Github
 
-def validate_tests(test_code: str, source_code: str) -> dict:
+def validate_tests(test_code: str, source_code: str) -&gt; dict:
     with tempfile.TemporaryDirectory() as tmpdir:
         # Write source + tests to temp dir
         (Path(tmpdir)/"module.py").write_text(source_code)
@@ -2222,7 +2229,7 @@ def validate_tests(test_code: str, source_code: str) -> dict:
         )
         return {"passed": result.returncode==0, "output": result.stdout}
 
-def open_pr(repo_name: str, test_files: dict, token: str) -> str:
+def open_pr(repo_name: str, test_files: dict, token: str) -&gt; str:
     g = Github(token)
     repo = g.get_repo(repo_name)
     branch_name = f"ai-tests-{int(time.time())}"
@@ -2240,7 +2247,7 @@ def open_pr(repo_name: str, test_files: dict, token: str) -> str:
     pr = repo.create_pull(title="🤖 AI-generated pytest tests",
         body="Generated by Test Generator Agent\n\nPassing: ✅",
         head=branch_name, base="main")
-    return pr.html_url</pre>
+    return pr.html_url</code></pre>
     </div>
     <div class="card">
       <h3>What This Proves + Pitfalls</h3>
@@ -2295,13 +2302,13 @@ def open_pr(repo_name: str, test_files: dict, token: str) -> str:
     </div>
     <div class="card">
       <h3>Code Parsing with tree-sitter</h3>
-      <pre">from tree_sitter import Language, Parser
+      <pre><code>from tree_sitter import Language, Parser
 import tree_sitter_python as tspython
 
 PY_LANGUAGE = Language(tspython.language())
 parser = Parser(PY_LANGUAGE)
 
-def parse_python_file(source: str) -> list[dict]:
+def parse_python_file(source: str) -&gt; list[dict]:
     tree = parser.parse(bytes(source, "utf8"))
 
     functions = []
@@ -2327,11 +2334,11 @@ def parse_python_file(source: str) -> list[dict]:
 # tree-sitter advantage over ast:
 # Works on INVALID Python (partial files, syntax errors)
 # Works on JS, Java, TypeScript, Go — same interface
-# Much faster for large files</pre>
+# Much faster for large files</code></pre>
     </div>
     <div class="card">
       <h3>Rich CLI Output</h3>
-      <pre">from rich.console import Console
+      <pre><code>from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.syntax import Syntax
@@ -2372,11 +2379,11 @@ def review(file_path: str, model: str):
             issue.suggestion
         )
     console.print(table)
-    console.print(f"\n[bold]Score: {result.score}/10[/bold]")</pre>
+    console.print(f"\n[bold]Score: {result.score}/10[/bold]")</code></pre>
     </div>
     <div class="card">
       <h3>Codebase RAG (Context-Aware Reviews)</h3>
-      <pre">## What makes this 10x better than a basic reviewer:
+      <pre><code>## What makes this 10x better than a basic reviewer:
 ## Context — the assistant knows your entire codebase
 
 # On first run: index the codebase
@@ -2402,7 +2409,7 @@ def index_codebase(root_dir: str):
     return vectorstore
 
 # On review: retrieve relevant context
-def context_aware_review(source: str, vectorstore) -> ReviewResult:
+def context_aware_review(source: str, vectorstore) -&gt; ReviewResult:
     # Find similar functions in codebase
     related = vectorstore.similarity_search(source, k=3)
     context = "\n\n".join([r.page_content for r in related])
@@ -2415,11 +2422,11 @@ CODEBASE PATTERNS:
 
 FUNCTION TO REVIEW:
 {source}"""
-    return llm.invoke(prompt)</pre>
+    return llm.invoke(prompt)</code></pre>
     </div>
     <div class="card">
       <h3>Evaluation Harness (Your Intel Edge)</h3>
-      <pre">## Build this BEFORE writing the LLM prompts (TDD for AI)
+      <pre><code>## Build this BEFORE writing the LLM prompts (TDD for AI)
 
 EVAL_CASES = [
     {
@@ -2435,7 +2442,7 @@ EVAL_CASES = [
     # 48 more cases...
 ]
 
-def evaluate_reviewer(eval_cases: list) -> dict:
+def evaluate_reviewer(eval_cases: list) -&gt; dict:
     results = []
     for case in eval_cases:
         output = review_api(case["code"])
@@ -2454,18 +2461,18 @@ def evaluate_reviewer(eval_cases: list) -> dict:
         "recall":    sum(r["recall"]    for r in results) / len(results),
         "p95_latency": sorted(r["latency_ms"] for r in results)[int(.95*len(results))]
     }
-# Show these numbers in your README. They're rare.</pre>
+# Show these numbers in your README. They're rare.</code></pre>
     </div>
     <div class="card card-wide">
       <h3>VS Code Extension (TypeScript) — Minimal Viable</h3>
-      <pre">// extension.ts — registers a "Review This Function" command
+      <pre><code>// extension.ts — registers a "Review This Function" command
 import * as vscode from 'vscode';
 import fetch from 'node-fetch';
 
 export function activate(context: vscode.ExtensionContext) {
     const disposable = vscode.commands.registerCommand(
         'codeReviewer.reviewSelection',
-        async () => {
+        async () =&gt; {
             const editor = vscode.window.activeTextEditor;
             if (!editor) return;
 
@@ -2475,7 +2482,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.withProgress(
                 {location: vscode.ProgressLocation.Notification,
                  title: "🤖 Reviewing code...", cancellable: false},
-                async () => {
+                async () =&gt; {
                     const response = await fetch('http://localhost:8000/review', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -2496,7 +2503,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 }
 // package.json: add "contributes.commands" entry
-// Ship on VS Code Marketplace — free, visible to recruiters</pre>
+// Ship on VS Code Marketplace — free, visible to recruiters</code></pre>
     </div>
     <div class="card">
       <h3>Demo Strategy (Week 22)</h3>
@@ -2616,7 +2623,7 @@ export function activate(context: vscode.ExtensionContext) {
     </div>
     <div class="card">
       <h3>How to Find Good Issues</h3>
-      <pre">## Step 1: Filter for beginner-friendly
+      <pre><code>## Step 1: Filter for beginner-friendly
 github.com/langchain-ai/langchain/issues?q=is:open+label:"good first issue"
 github.com/explodinggradients/ragas/issues?q=is:open+label:"help wanted"
 
@@ -2634,7 +2641,7 @@ github.com/explodinggradients/ragas/issues?q=is:open+label:"help wanted"
 # Wait for maintainer to confirm — avoids duplicate work
 
 ## Tool: goodfirstissue.dev/language/python
-## Aggregates good-first-issues across all repos</pre>
+## Aggregates good-first-issues across all repos</code></pre>
     </div>
     <div class="card">
       <h3>PR Etiquette</h3>
@@ -2783,9 +2790,9 @@ github.com/explodinggradients/ragas/issues?q=is:open+label:"help wanted"
   <div class="cards">
     <div class="card">
       <h3>Profile README Setup</h3>
-      <pre">## Create repo: username/username (special repo = profile README)
+      <pre><code>## Create repo: username/username (special repo = profile README)
 
-<!-- In README.md -->
+&lt;!-- In README.md --&gt;
 # Sushanth Kulkarni — AI / LLM Engineer
 
 Building GenAI applications: RAG systems, AI agents,
@@ -2793,20 +2800,20 @@ and developer tooling with LLMs.
 
 ## 🔨 Currently Building
 - **AI Code Reviewer** — tree-sitter + voyage-code-2 + Claude Sonnet
-- **Document Q&A** — RAGAS score: 0.91 faithfulness
+- **Document Q&amp;A** — RAGAS score: 0.91 faithfulness
 
 ## 📌 Featured Projects
 | Project | Stack | Live |
 |---------|-------|------|
 | AI Coding Assistant | LangGraph + Claude + FastAPI | [Demo](url) |
-| Document Q&A RAG | LangChain + Pinecone + RAGAS | [Demo](url) |
+| Document Q&amp;A RAG | LangChain + Pinecone + RAGAS | [Demo](url) |
 | Test Generator Agent | LangGraph + PyGitHub | [Repo](url) |
 
 ## 📊 GitHub Stats
 ![stats](https://github-readme-stats.vercel.app/api?username=YOUR_USERNAME)
 
 ## 📫 Reach me
-[LinkedIn](url) · [HuggingFace](url)</pre>
+[LinkedIn](url) · [HuggingFace](url)</code></pre>
     </div>
     <div class="card">
       <h3>Every Repo Must Have</h3>
@@ -2913,7 +2920,7 @@ and developer tooling with LLMs.
     </div>
     <div class="card">
       <h3>System Design: Design a RAG System</h3>
-      <pre">// 45-min interview answer structure:
+      <pre><code>// 45-min interview answer structure:
 
 1. Clarify requirements (5 min)
    - Scale: 10k vs 10M documents?
@@ -2934,7 +2941,7 @@ and developer tooling with LLMs.
 4. Production concerns (10 min)
    - Evaluation: RAGAS metrics + human feedback
    - Monitoring: LangSmith, latency, cost
-   - Failure modes + fallbacks</pre>
+   - Failure modes + fallbacks</code></pre>
     </div>
     <div class="card">
       <h3>Your Federated Learning Edge</h3>
